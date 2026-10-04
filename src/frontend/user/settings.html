@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Settings</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="levels-bg">
+  <a href="index.html" class="home-btn">🏠 Home</a>
+  <button id="musicToggleBtn" onclick="toggleBgMusic()" style="position:fixed; top:20px; right:20px; z-index:10; background:#1a1a3d; border:2px solid #00f5ff; color:#00f5ff; border-radius:50%; width:44px; height:44px; font-size:1.1rem; cursor:pointer;">🔊</button>
+
+  <div class="wood-frame">
+    <div class="parchment-inner">
+      <h2 class="wood-title">SETTINGS</h2>
+
+      <div class="toggle-row">
+        <span>Sound Effects</span>
+        <div class="toggle-switch" id="soundToggle" onclick="toggleSound()"></div>
+      </div>
+
+      <div class="toggle-row">
+        <span>Music</span>
+        <div class="toggle-switch" id="musicToggle" onclick="toggleMusicSetting()"></div>
+      </div>
+
+      <div class="toggle-row">
+        <span>Notifications</span>
+        <div class="toggle-switch" id="notifToggle" onclick="toggleNotif()"></div>
+      </div>
+
+      <div class="wood-btn-row">
+        <button class="wood-btn" onclick="resetProgress()">RESET</button>
+        <button class="wood-btn" onclick="window.location.href='index.html'">BACK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/settings.js"></script>
+  <script src="js/bgmusic.js"></script>
+</body>
+</html>

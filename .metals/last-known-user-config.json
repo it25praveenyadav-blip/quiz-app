@@ -1,0 +1,35 @@
+{
+  "enableIndentOnPaste": false,
+  "scalafixLintEnabled": false,
+  "defaultBspToBuildTool": false,
+  "enableSemanticHighlighting": true,
+  "excludedPackages": [],
+  "bloopJvmProperties": [],
+  "enableStripMarginOnTypeFormatting": true,
+  "superMethodLensesEnabled": true,
+  "startMcpServer": false,
+  "bloopSbtAlreadyInstalled": false,
+  "symbolPrefixes": {
+    "scala/collection/mutable/": "mutable.",
+    "java/util/": "ju."
+  },
+  "inlayHintsOptions": {
+    "HintsXRayMode": "false",
+    "ByNameParameters": "false",
+    "HintsInPatternMatch": "false",
+    "ImplicitArguments": "false",
+    "TypeParameters": "false",
+    "ClosingLabels": "false",
+    "InferredType": "false",
+    "ImplicitConversions": "false",
+    "NamedParameters": "false"
+  },
+  "scalafixRulesDependencies": [],
+  "testUserInterface": "test explorer",
+  "bloopVersion": "2.1.2",
+  "autoImportBuilds": "off",
+  "verboseCompilation": false,
+  "worksheetCancelTimeout": 4,
+  "worksheetScreenWidth": 120,
+  "enableBestEffort": false
+}

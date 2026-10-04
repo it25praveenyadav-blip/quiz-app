@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Quiz</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="levels-bg">
+  <a href="index.html" class="home-btn">🏠 Home</a>
+  <button id="musicToggleBtn" onclick="toggleBgMusic()" style="position:fixed; top:20px; right:20px; z-index:10; background:#1a1a3d; border:2px solid #00f5ff; color:#00f5ff; border-radius:50%; width:44px; height:44px; font-size:1.1rem; cursor:pointer;">🔊</button>
+
+  <div class="wood-frame" style="max-width:480px;">
+    <div class="parchment-inner">
+      <div class="quiz-header" style="color:#3a2a1a;">
+        <span id="levelLabel">LEVEL 1</span>
+        <span id="timerLabel">⏱ 20</span>
+        <span id="scoreLabel">Score: 0</span>
+      </div>
+
+      <div class="progress-bar-outer" style="background:#c9b888;">
+        <div class="progress-bar-inner" id="progressBar" style="background:linear-gradient(90deg,#ffe066,#e0a830);"></div>
+      </div>
+      <p class="progress-text" style="color:#6b5a3a;" id="progressText">Question 1 of 1</p>
+
+      <p id="questionText" style="font-size:1.2rem; color:#3a2a1a; margin:20px 0; min-height:60px;">Loading question...</p>
+
+      <button class="wood-btn" id="playSoundBtn" style="display:none; width:100%; margin-bottom:12px;" onclick="replayMelody()">🔊 Play Again</button>
+
+      <div class="options-grid" id="optionsGrid"></div>
+
+      <button class="wood-btn" id="hintBtn" style="width:100%; margin-top:12px;" onclick="useHint()">💡 50-50 Hint</button>
+      <button class="wood-btn-full" id="nextBtn" style="display:none;" onclick="nextQuestion()">NEXT ▶</button>
+    </div>
+  </div>
+
+  <script src="js/melodies.js"></script>
+  <script src="js/sports.js"></script>
+  <script src="js/temples.js"></script>
+  <script src="js/songs.js"></script>
+  <script src="js/economics.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/bgmusic.js"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel - Quiz Quest</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-bg">
+
+  <!-- Login Screen -->
+  <div id="loginScreen" class="admin-login-wrap">
+    <div class="admin-login-box">
+      <h1 class="admin-title">🔐 ADMIN LOGIN</h1>
+      <input type="password" id="adminPassword" placeholder="Enter admin password">
+      <p id="loginError" class="admin-error"></p>
+      <button class="btn-glow" onclick="checkLogin()">LOGIN</button>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="dashboard" class="admin-dashboard" style="display:none;">
+    <div class="admin-header">
+      <h1 class="admin-title">⚙️ ADMIN PANEL</h1>
+      <button class="btn-outline" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- 4 Category Cards -->
+    <div class="admin-cat-grid" id="adminCatGrid"></div>
+
+    <!-- Selected category panel (hidden until a card is clicked) -->
+    <div id="categoryPanel" style="display:none;">
+      <div class="admin-panel">
+        <h2 class="admin-subtitle" id="formCategoryTitle">Add Question</h2>
+
+        <label>Question Text</label>
+        <input type="text" id="questionText" placeholder="Enter the question">
+
+        <label>Options</label>
+        <input type="text" id="option0" placeholder="Option 1">
+        <input type="text" id="option1" placeholder="Option 2">
+        <input type="text" id="option2" placeholder="Option 3">
+        <input type="text" id="option3" placeholder="Option 4">
+
+        <label>Correct Option</label>
+        <select id="correctOption">
+          <option value="0">Option 1</option>
+          <option value="1">Option 2</option>
+          <option value="2">Option 3</option>
+          <option value="3">Option 4</option>
+        </select>
+
+        <p id="formMsg" class="admin-msg"></p>
+        <button class="btn-glow" onclick="addQuestion()">➕ Add Question</button>
+      </div>
+
+      <div class="admin-panel">
+        <h2 class="admin-subtitle" id="listCategoryTitle">Existing Questions</h2>
+        <div id="questionList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

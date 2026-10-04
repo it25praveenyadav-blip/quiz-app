@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sign Up - Quiz Quest</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="levels-bg">
+  <button id="musicToggleBtn" onclick="toggleBgMusic()" style="position:fixed; top:20px; right:20px; z-index:10; background:#1a1a3d; border:2px solid #00f5ff; color:#00f5ff; border-radius:50%; width:44px; height:44px; font-size:1.1rem; cursor:pointer;">🔊</button>
+
+  <div class="wood-frame">
+    <div class="parchment-inner">
+      <h2 class="wood-title">SIGN UP</h2>
+
+      <form id="signupForm">
+        <input type="text" class="wood-input" id="newUsername" placeholder="Username" required>
+        <input type="password" class="wood-input" id="newPassword" placeholder="Password" required>
+        <p id="errorMsg" class="admin-error"></p>
+        <button type="submit" class="wood-btn-full">SIGN UP</button>
+      </form>
+
+      <p style="text-align:center; margin-top:15px; font-size:0.85rem; color:#5a3a1a;">
+        Already have an account? <a href="signin.html" style="color:#e06818; font-weight:bold;">Sign In</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/bgmusic.js"></script>
+</body>
+</html>
