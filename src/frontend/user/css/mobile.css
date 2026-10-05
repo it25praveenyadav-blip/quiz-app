@@ -48,9 +48,9 @@ body.welcome-bg {
     left: 12px;
   }
 
-  .quiz-bg,
-  .levels-bg,
-  .welcome-bg {
+  body.quiz-bg,
+  body.levels-bg,
+  body.welcome-bg {
     background-attachment: fixed;
     background-position: center;
     background-size: contain;
