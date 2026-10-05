@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8080/api/auth';
+const API_BASE_URL = '/api/auth';
 
 // 1. Sign Up (Registration)
 async function handleSignup(username, password) {
@@ -40,7 +40,7 @@ async function handleSignin(username, password) {
 
     if (data.success) {
       alert('Login Successful!');
-      sessionStorage.setItem('username', data.username);
+      localStorage.setItem('currentUser', data.username);
       window.location.href = 'index.html'; // Home / Quiz page par redirect karein
     } else {
       alert('Login Failed: ' + data.message);
@@ -49,4 +49,26 @@ async function handleSignin(username, password) {
     console.error('Error:', error);
     alert('Server connect nahi ho paya.');
   }
+}
+
+const signupForm = document.getElementById('signupForm');
+if (signupForm) {
+  signupForm.addEventListener('submit', event => {
+    event.preventDefault();
+    handleSignup(
+      document.getElementById('newUsername').value,
+      document.getElementById('newPassword').value
+    );
+  });
+}
+
+const signinForm = document.getElementById('signinForm');
+if (signinForm) {
+  signinForm.addEventListener('submit', event => {
+    event.preventDefault();
+    handleSignin(
+      document.getElementById('username').value,
+      document.getElementById('password').value
+    );
+  });
 }
