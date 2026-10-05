@@ -51,7 +51,7 @@ body.welcome-bg {
   .quiz-bg,
   .levels-bg,
   .welcome-bg {
-    background-attachment: scroll;
+    background-attachment: fixed;
     background-position: center;
     background-size: contain;
   }
