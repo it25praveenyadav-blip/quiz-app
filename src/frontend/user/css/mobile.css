@@ -1,3 +1,16 @@
+body.levels-bg,
+body.quiz-bg,
+body.welcome-bg {
+  background-color: #0a0a1a;
+  background-image:
+    linear-gradient(rgba(10, 10, 26, 0.5), rgba(10, 10, 26, 0.64)),
+    url("../images/quiz-bg.png");
+  background-position: center top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
 @media (max-width: 480px) {
   body {
     min-height: 100svh;
