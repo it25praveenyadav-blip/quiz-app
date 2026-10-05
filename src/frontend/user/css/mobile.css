@@ -1,0 +1,43 @@
+@media (max-width: 480px) {
+  body {
+    min-height: 100svh;
+    justify-content: flex-start;
+    padding: 64px 12px 24px;
+  }
+
+  .wood-frame,
+  .level-panel {
+    width: 100%;
+  }
+
+  .wood-frame {
+    margin: 20px auto;
+  }
+
+  .level-panel {
+    margin: 40px auto 20px;
+    padding: 42px 20px 22px;
+  }
+
+  .level-grid-8 {
+    gap: 8px;
+  }
+
+  .leaderboard-row,
+  .settings-row {
+    width: min(100%, 300px);
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .home-btn {
+    top: 12px;
+    left: 12px;
+  }
+
+  .quiz-bg,
+  .levels-bg,
+  .welcome-bg {
+    background-attachment: scroll;
+  }
+}

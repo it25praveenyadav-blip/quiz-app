@@ -1,0 +1,22 @@
+@media (max-width: 480px) {
+  .admin-login-wrap {
+    padding: 20px;
+  }
+
+  .admin-login-box {
+    width: 100%;
+  }
+
+  .admin-dashboard {
+    padding: 20px 12px;
+  }
+
+  .admin-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .admin-panel {
+    padding: 18px 14px;
+  }
+}
