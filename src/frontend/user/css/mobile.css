@@ -52,5 +52,7 @@ body.welcome-bg {
   .levels-bg,
   .welcome-bg {
     background-attachment: scroll;
+    background-position: center;
+    background-size: contain;
   }
 }
