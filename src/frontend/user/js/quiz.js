@@ -40,14 +40,23 @@ function playSound(type) {
   osc.stop(ctx.currentTime + 0.15);
 }
 
-function loadQuestions() {
+async function loadQuestions() {
   const bankMap = {
     sports: typeof sportsQuestions !== 'undefined' ? sportsQuestions : [],
     temples: typeof templesQuestions !== 'undefined' ? templesQuestions : [],
     songs: typeof songsQuestions !== 'undefined' ? songsQuestions : [],
     economics: typeof economicsQuestions !== 'undefined' ? economicsQuestions : []
   };
-  const bank = bankMap[category] || bankMap.sports;
+  const bank = [...(bankMap[category] || bankMap.sports)];
+  const response = await fetch(`/api/questions/${encodeURIComponent(category)}`);
+  if (!response.ok) {
+    throw new Error(`Unable to load saved questions (${response.status}).`);
+  }
+  const savedQuestions = await response.json();
+  bank.push(...savedQuestions.map(({ text, options, correct }) => ({ text, options, correct })));
+  if (bank.length === 0) {
+    throw new Error('No questions are available for this category.');
+  }
   const perLevel = 6;
   const startIndex = ((level - 1) * perLevel) % bank.length;
 
@@ -168,4 +177,10 @@ function finishLevel() {
   window.location.href = 'result.html';
 }
 
-loadQuestions();
+loadQuestions().catch(error => {
+  document.getElementById('questionText').textContent =
+    `Unable to load questions. Please refresh and try again. (${error.message})`;
+  document.getElementById('optionsGrid').replaceChildren();
+  document.getElementById('hintBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+});

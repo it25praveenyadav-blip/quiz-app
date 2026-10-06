@@ -1,5 +1,7 @@
 HELP.md
 target/
+/quizdb.mv.db
+/quizdb.trace.db
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
