@@ -1,25 +1,31 @@
-const nextLevelBtn = document.getElementById('nextLevelBtn');
-const TOTAL_LEVELS = 30;
-if (data.level < TOTAL_LEVELS) {
-  nextLevelBtn.onclick = () => window.location.href = `quiz.html?level=${data.level + 1}`;
-} else {
-  nextLevelBtn.textContent = '🎉 ALL LEVELS DONE!';
-  nextLevelBtn.disabled = true;
-}
-const data = JSON.parse(localStorage.getItem('lastScore') || '{"score":0,"total":0,"level":1,"wrongAnswers":[]}');
-const nextLevelBtn = document.getElementById('nextLevelBtn');
-const TOTAL_LEVELS = 30;
+const data = JSON.parse(localStorage.getItem('lastScore') || '{"score":0,"total":0,"level":1,"wrongAnswers":[],"stars":0}');
 
-if (data.level < TOTAL_LEVELS) {
-  nextLevelBtn.onclick = () => {
-    window.location.href = `quiz.html?level=${data.level + 1}`;
-  };
-} else {
-  nextLevelBtn.textContent = '🎉 ALL LEVELS DONE!';
-  nextLevelBtn.disabled = true;
+if (data.stars && data.stars > 0) {
+  document.getElementById('winLevelText').textContent = `Level ${data.level}`;
+
+  const starsDiv = document.getElementById('winStars');
+  let starText = '';
+  for (let i = 0; i < 3; i++) {
+    starText += i < data.stars ? '⭐' : '☆';
+  }
+  starsDiv.textContent = starText;
+
+  document.getElementById('winOverlay').style.display = 'flex';
 }
+
+function closeWinPopup() {
+  document.getElementById('winOverlay').style.display = 'none';
+}
+
 document.getElementById('resultTitle').textContent = `LEVEL ${data.level} COMPLETE!`;
 document.getElementById('finalScore').textContent = `${data.score} / ${data.total}`;
+
+const starsEarned = data.stars || 0;
+let starDisplay = '';
+for (let i = 0; i < 3; i++) {
+  starDisplay += i < starsEarned ? '⭐' : '☆';
+}
+document.getElementById('starsEarned').textContent = starDisplay;
 
 if (data.score === data.total) {
   launchConfetti();
@@ -34,6 +40,15 @@ if (data.wrongAnswers && data.wrongAnswers.length > 0) {
     div.innerHTML = `<p>${w.question}</p><p class="wrong-text">Your answer: ${w.yourAnswer}</p><p class="correct-text">Correct: ${w.correct}</p>`;
     section.appendChild(div);
   });
+}
+
+const nextLevelBtn = document.getElementById('nextLevelBtn');
+const TOTAL_LEVELS = 30;
+if (data.level < TOTAL_LEVELS) {
+  nextLevelBtn.onclick = () => window.location.href = `quiz.html?level=${data.level + 1}`;
+} else {
+  nextLevelBtn.textContent = '🎉 ALL LEVELS DONE!';
+  nextLevelBtn.disabled = true;
 }
 
 function retryLevel() {

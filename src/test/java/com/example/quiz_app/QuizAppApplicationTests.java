@@ -2,9 +2,14 @@ package com.example.quiz_app;
 
 import com.example.quiz_app.entity.QuizQuestion;
 import com.example.quiz_app.repository.QuizQuestionRepository;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -15,8 +20,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(properties = "spring.datasource.url=jdbc:h2:mem:quizdb-test")
+@SpringBootTest(
+		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+		properties = "spring.datasource.url=jdbc:h2:mem:quizdb-test")
 @AutoConfigureMockMvc
 class QuizAppApplicationTests {
 
@@ -26,9 +35,8 @@ class QuizAppApplicationTests {
 	@Autowired
 	private QuizQuestionRepository questionRepository;
 
-	@Test
-	void contextLoads() {
-	}
+	@LocalServerPort
+	private int port;
 
 	@Test
 	void rootRedirectsToTheSignInPage() throws Exception {
@@ -41,6 +49,18 @@ class QuizAppApplicationTests {
 	void healthCheckReturnsOk() throws Exception {
 		mockMvc.perform(get("/health"))
 				.andExpect(status().isOk());
+	}
+
+	@Test
+	void h2ConsoleIsAvailableForBrowserAccess() throws Exception {
+		HttpResponse<String> response = HttpClient.newHttpClient().send(
+				HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/h2-console/"))
+						.GET()
+						.build(),
+				HttpResponse.BodyHandlers.ofString());
+		assertEquals(200, response.statusCode());
+		assertEquals("SAMEORIGIN", response.headers().firstValue("X-Frame-Options").orElse(null));
+		assertTrue(response.body().contains("H2 Console"));
 	}
 
 	@Test

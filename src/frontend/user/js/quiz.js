@@ -11,20 +11,6 @@ let hintUsed = false;
 let wrongAnswers = [];
 
 document.getElementById('levelLabel').textContent = `LEVEL ${level}`;
-function calculateStars(score, total) {
-  const percent = (score / total) * 100;
-  if (percent === 100) return 3;
-  if (percent >= 50) return 2;
-  if (percent > 0) return 1;
-  return 0;
-}
-const starsKey = `levelStars_${category}`;
-const starsData = JSON.parse(localStorage.getItem(starsKey) || '{}');
-const earnedStars = calculateStars(score, questions.length);
-if (!starsData[level] || starsData[level] < earnedStars) {
-  starsData[level] = earnedStars;
-}
-localStorage.setItem(starsKey, JSON.stringify(starsData));
 
 function playSound(type) {
   const soundOn = localStorage.getItem('soundOn') !== 'false';
@@ -40,23 +26,20 @@ function playSound(type) {
   osc.stop(ctx.currentTime + 0.15);
 }
 
-async function loadQuestions() {
+function loadQuestions() {
   const bankMap = {
     sports: typeof sportsQuestions !== 'undefined' ? sportsQuestions : [],
     temples: typeof templesQuestions !== 'undefined' ? templesQuestions : [],
     songs: typeof songsQuestions !== 'undefined' ? songsQuestions : [],
     economics: typeof economicsQuestions !== 'undefined' ? economicsQuestions : []
   };
-  const bank = [...(bankMap[category] || bankMap.sports)];
-  const response = await fetch(`/api/questions/${encodeURIComponent(category)}`);
-  if (!response.ok) {
-    throw new Error(`Unable to load saved questions (${response.status}).`);
+  const bank = bankMap[category] || bankMap.sports;
+
+  if (!bank || bank.length === 0) {
+    document.getElementById('questionText').textContent = 'No questions found for this category.';
+    return;
   }
-  const savedQuestions = await response.json();
-  bank.push(...savedQuestions.map(({ text, options, correct }) => ({ text, options, correct })));
-  if (bank.length === 0) {
-    throw new Error('No questions are available for this category.');
-  }
+
   const perLevel = 6;
   const startIndex = ((level - 1) * perLevel) % bank.length;
 
@@ -78,11 +61,14 @@ function showQuestion() {
   document.getElementById('hintBtn').style.display = 'inline-block';
   hintUsed = false;
 
+  const playBtn = document.getElementById('playSoundBtn');
+  if (playBtn) playBtn.style.display = 'none';
+
   const grid = document.getElementById('optionsGrid');
   grid.innerHTML = '';
   q.options.forEach((opt, idx) => {
     const btn = document.createElement('button');
-    btn.className = 'option-btn';
+    btn.className = 'wood-option-btn';
     btn.textContent = opt;
     btn.dataset.idx = idx;
     btn.onclick = () => selectAnswer(idx);
@@ -111,7 +97,7 @@ function useHint() {
   hintUsed = true;
   document.getElementById('hintBtn').style.display = 'none';
   const q = questions[currentQ];
-  const buttons = document.querySelectorAll('.option-btn');
+  const buttons = document.querySelectorAll('.wood-option-btn');
   let hidden = 0;
   buttons.forEach(b => {
     const idx = parseInt(b.dataset.idx);
@@ -125,7 +111,7 @@ function useHint() {
 function selectAnswer(idx) {
   clearInterval(timer);
   const q = questions[currentQ];
-  const buttons = document.querySelectorAll('.option-btn');
+  const buttons = document.querySelectorAll('.wood-option-btn');
   buttons.forEach(b => b.onclick = null);
 
   if (idx === q.correct) {
@@ -152,6 +138,14 @@ function nextQuestion() {
   }
 }
 
+function calculateStars(score, total) {
+  const percent = (score / total) * 100;
+  if (percent === 100) return 3;
+  if (percent >= 50) return 2;
+  if (percent > 0) return 1;
+  return 0;
+}
+
 function finishLevel() {
   document.getElementById('progressBar').style.width = '100%';
   const storageKey = `completedLevels_${category}`;
@@ -161,7 +155,14 @@ function finishLevel() {
     localStorage.setItem(storageKey, JSON.stringify(completed));
   }
 
-  // Update global stats
+  const starsKey = `levelStars_${category}`;
+  const starsData = JSON.parse(localStorage.getItem(starsKey) || '{}');
+  const earnedStars = calculateStars(score, questions.length);
+  if (!starsData[level] || starsData[level] < earnedStars) {
+    starsData[level] = earnedStars;
+  }
+  localStorage.setItem(starsKey, JSON.stringify(starsData));
+
   const username = localStorage.getItem('currentUser');
   const statsKey = `stats_${username}`;
   const stats = JSON.parse(localStorage.getItem(statsKey) || '{"totalScore":0,"totalQuestions":0,"totalCorrect":0,"badges":[]}');
@@ -173,14 +174,12 @@ function finishLevel() {
   if (score === questions.length && !stats.badges.includes('Perfect Score')) stats.badges.push('Perfect Score');
   localStorage.setItem(statsKey, JSON.stringify(stats));
 
-  localStorage.setItem('lastScore', JSON.stringify({ score, total: questions.length, level, category, wrongAnswers }));
+  const catScoreKey = `score_${category}_${username}`;
+  const existingCatScore = parseInt(localStorage.getItem(catScoreKey) || '0');
+  localStorage.setItem(catScoreKey, existingCatScore + score);
+
+  localStorage.setItem('lastScore', JSON.stringify({ score, total: questions.length, level, category, wrongAnswers, stars: earnedStars }));
   window.location.href = 'result.html';
 }
 
-loadQuestions().catch(error => {
-  document.getElementById('questionText').textContent =
-    `Unable to load questions. Please refresh and try again. (${error.message})`;
-  document.getElementById('optionsGrid').replaceChildren();
-  document.getElementById('hintBtn').style.display = 'none';
-  document.getElementById('nextBtn').style.display = 'none';
-});
+loadQuestions();

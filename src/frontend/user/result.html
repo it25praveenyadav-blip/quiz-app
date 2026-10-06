@@ -2,12 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Result</title>
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/mobile.css">
 </head>
 <body class="levels-bg">
+
+  <div class="win-overlay" id="winOverlay" style="display:none;">
+    <div class="win-box">
+      <div class="win-crown">👑</div>
+      <div class="win-title">YOU<br>WIN</div>
+      <div class="win-rainbow-emoji">🌈</div>
+      <div class="win-stars" id="winStars"></div>
+      <div class="win-level" id="winLevelText">Level 2</div>
+      <button class="win-ok-btn" onclick="closeWinPopup()">OK</button>
+    </div>
+  </div>
+
   <a href="index.html" class="home-btn">🏠 Home</a>
   <button id="musicToggleBtn" onclick="toggleBgMusic()" style="position:fixed; top:20px; right:20px; z-index:10; background:#1a1a3d; border:2px solid #00f5ff; color:#00f5ff; border-radius:50%; width:44px; height:44px; font-size:1.1rem; cursor:pointer;">🔊</button>
   <canvas id="confettiCanvas"></canvas>
