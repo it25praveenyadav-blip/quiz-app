@@ -6,3 +6,34 @@ services:
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: render
+      - key: DB_HOST
+        fromDatabase:
+          name: quiz-app-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: quiz-app-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: quiz-app-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: quiz-app-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: quiz-app-db
+          property: password
+      - key: ADMIN_PASSWORD
+        generateValue: true
+
+databases:
+  - name: quiz-app-db
+    databaseName: quiz_app
+    user: quiz_app_user
+    plan: free
