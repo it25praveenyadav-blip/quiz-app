@@ -19,12 +19,18 @@ body.welcome-bg {
   }
 
   .wood-frame,
-  .level-panel {
+  .level-panel,
+  .puzzle-frame {
     width: 100%;
   }
 
-  .wood-frame {
+  .wood-frame,
+  .puzzle-frame {
     margin: 20px auto;
+  }
+
+  .puzzle-frame {
+    padding: 18px 12px;
   }
 
   .level-panel {
@@ -46,6 +52,27 @@ body.welcome-bg {
   .home-btn {
     top: 12px;
     left: 12px;
+  }
+
+  .home-menu {
+    top: 12px;
+    left: 12px;
+  }
+
+  .quiz-toolbar {
+    top: 12px;
+    left: 12px;
+    gap: 6px;
+  }
+
+  .quiz-menu-button {
+    padding: 7px 10px;
+    font-size: 0.8rem;
+  }
+
+  .quiz-coin-balance {
+    padding: 8px 10px;
+    font-size: 0.8rem;
   }
 
   body.quiz-bg,

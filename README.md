@@ -2,8 +2,14 @@
 
 ## Database-backed questions
 
-The admin panel stores custom questions in the file-backed H2 database (`quizdb.mv.db`) in the application's working directory. The quiz page loads saved questions from the backend; local restarts do not clear them.
+The app uses MySQL for local development. Install and start MySQL Server, then set credentials in the PowerShell terminal before running the app:
+
+```powershell
+$env:SPRING_DATASOURCE_USERNAME = "root"
+$env:SPRING_DATASOURCE_PASSWORD = "your-MySQL-password"
+.\mvnw.cmd spring-boot:run
+```
+
+By default, the app connects to `localhost:3306` and creates the `quiz_app` database if the MySQL user has permission. To use another host or database, set `SPRING_DATASOURCE_URL`; credentials can be supplied with `SPRING_DATASOURCE_USERNAME` and `SPRING_DATASOURCE_PASSWORD`. The app uses `ddl-auto=update` to create/update tables. The in-memory H2 database is only used by tests.
 
 Run the application with `.\mvnw.cmd spring-boot:run` and open `/admin/index.html` on the same server. The development admin password is `PASSWORD123`. Set the `ADMIN_PASSWORD` environment variable to use a different password before deployment.
-
-For deployments that need data to survive redeploys, configure persistent storage and set `SPRING_DATASOURCE_URL` to an H2 database location on that storage.

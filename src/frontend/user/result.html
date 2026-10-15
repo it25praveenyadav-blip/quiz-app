@@ -9,12 +9,18 @@
 
   <div class="win-overlay" id="winOverlay" style="display:none;">
     <div class="win-box">
-      <div class="win-crown">👑</div>
-      <div class="win-title">YOU<br>WIN</div>
-      <div class="win-rainbow-emoji">🌈</div>
+      <div class="win-title">LEVEL COMPLETE!</div>
+      <div class="win-level" id="winLevelText">Level 1</div>
+      <div class="win-coin-balance">🪙 <span id="winCoinBalance">0</span></div>
+      <div class="win-coin-balance">🎁 Extra chances: <span id="winExtraChanceBalance">0</span></div>
+      <div class="win-gift">
+        <span class="win-gift-icon" aria-hidden="true">🎁</span>
+        <span>LEVEL COMPLETE GIFT</span>
+        <strong id="giftReward">+1 Extra Chance</strong>
+      </div>
       <div class="win-stars" id="winStars"></div>
-      <div class="win-level" id="winLevelText">Level 2</div>
-      <button class="win-ok-btn" onclick="closeWinPopup()">OK</button>
+      <button class="win-ok-btn" id="winNextBtn">NEXT ▶</button>
+      <button class="win-results-btn" onclick="closeWinPopup()">VIEW RESULTS</button>
     </div>
   </div>
 

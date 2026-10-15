@@ -1,16 +1,32 @@
 const data = JSON.parse(localStorage.getItem('lastScore') || '{"score":0,"total":0,"level":1,"wrongAnswers":[],"stars":0}');
+const username = localStorage.getItem('currentUser') || 'guest';
+const coinBalance = Number.parseInt(localStorage.getItem(`coins_${username}`) || '0', 10);
+const extraChanceBalance = Number.parseInt(localStorage.getItem(`extraChances_${username}`) || '0', 10);
 
-if (data.stars && data.stars > 0) {
-  document.getElementById('winLevelText').textContent = `Level ${data.level}`;
+document.getElementById('winLevelText').textContent = `LEVEL ${data.level}`;
+document.getElementById('winCoinBalance').textContent = coinBalance;
+document.getElementById('winExtraChanceBalance').textContent = extraChanceBalance;
+document.getElementById('giftReward').textContent = data.extraChanceReward > 0
+  ? `+${data.extraChanceReward} Extra Chance for next level`
+  : data.level >= 30
+    ? 'No next level reward'
+    : 'First-completion gift already collected';
 
-  const starsDiv = document.getElementById('winStars');
-  let starText = '';
-  for (let i = 0; i < 3; i++) {
-    starText += i < data.stars ? '⭐' : '☆';
-  }
-  starsDiv.textContent = starText;
+const starsDiv = document.getElementById('winStars');
+let starText = '';
+for (let i = 0; i < 3; i++) {
+  starText += i < (data.stars || 0) ? '⭐' : '☆';
+}
+starsDiv.textContent = starText;
 
-  document.getElementById('winOverlay').style.display = 'flex';
+document.getElementById('winOverlay').style.display = 'flex';
+
+const winNextBtn = document.getElementById('winNextBtn');
+if (data.level < 30) {
+  winNextBtn.onclick = () => window.location.href = `quiz.html?level=${data.level + 1}`;
+} else {
+  winNextBtn.textContent = 'LEVEL MAP 🏠';
+  winNextBtn.onclick = () => window.location.href = 'levels.html';
 }
 
 function closeWinPopup() {

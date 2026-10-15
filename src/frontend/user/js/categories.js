@@ -5,7 +5,8 @@ const categories = [
   { id: 'sports', name: 'Sports', icon: '⚽' },
   { id: 'temples', name: 'Temples', icon: '🛕' },
   { id: 'songs', name: 'Songs', icon: '🎵' },
-  { id: 'economics', name: 'Economics', icon: '💰' }
+  { id: 'economics', name: 'Economics', icon: '💰' },
+  { id: 'puzzle', name: 'Puzzle Solve', icon: '🧩' }
 ];
 
 const grid = document.getElementById('categoryGrid');

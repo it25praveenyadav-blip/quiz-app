@@ -12,6 +12,17 @@
     if (!localStorage.getItem('currentUser')) window.location.href = 'signin.html';
   </script>
 
+  <div class="home-menu">
+    <button class="wood-btn home-menu-toggle" id="homeMenuToggle" type="button"
+            aria-expanded="false" aria-controls="homeMenu">☰ Menu</button>
+    <nav class="home-menu-panel" id="homeMenu" aria-label="Home navigation" hidden>
+      <a href="categories.html">▶ Start Game</a>
+      <a href="profile.html">👤 Profile</a>
+      <a href="leaderboard.html">🏆 Scores</a>
+      <a href="settings.html">⚙️ Settings</a>
+    </nav>
+  </div>
+
   <button id="musicToggleBtn" onclick="toggleBgMusic()" style="position:fixed; top:20px; right:20px; z-index:10; background:#1a1a3d; border:2px solid #00f5ff; color:#00f5ff; border-radius:50%; width:44px; height:44px; font-size:1.1rem; cursor:pointer;">🔊</button>
 
   <div class="wood-frame">
@@ -22,13 +33,6 @@
       <p style="color:#6b5a3a; font-size:0.85rem; margin-bottom:20px;">Test your brain. Unlock every level.</p>
 
       <button class="wood-btn-full" onclick="window.location.href='categories.html'">▶ START GAME</button>
-
-      <div class="wood-btn-row" style="margin-top:15px;">
-        <button class="wood-btn" onclick="window.location.href='profile.html'" style="font-size:0.8rem; padding:10px 6px;">👤 Profile</button>
-        <button class="wood-btn" onclick="window.location.href='leaderboard.html'" style="font-size:0.8rem; padding:10px 6px;">🏆 Scores</button>
-        <button class="wood-btn" onclick="window.location.href='settings.html'" style="font-size:0.8rem; padding:10px 6px;">⚙️ Settings</button>
-      </div>
-
       <p style="color:#8a7a5a; font-size:0.75rem; margin-top:18px;">20 Levels • 4 Options Each • Beat Your Score</p>
     </div>
   </div>
@@ -38,6 +42,7 @@
       'Welcome, ' + localStorage.getItem('currentUser');
   </script>
 
+  <script src="js/home-menu.js"></script>
   <script src="js/bgmusic.js"></script>
 </body>
 </html>

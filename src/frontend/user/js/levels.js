@@ -34,7 +34,8 @@ function renderPage() {
       btn.innerHTML = '🔒';
     } else {
       btn.textContent = i;
-      btn.onclick = () => window.location.href = `quiz.html?level=${i}`;
+      const gamePage = category === 'puzzle' ? 'puzzle.html' : 'quiz.html';
+      btn.onclick = () => window.location.href = `${gamePage}?level=${i}`;
     }
 
     const stars = document.createElement('div');

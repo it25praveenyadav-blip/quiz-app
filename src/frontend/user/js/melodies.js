@@ -15,8 +15,20 @@ const melodies = [
   { name: "Frere Jacques", notes: ["C4","D4","E4","C4","C4","D4","E4","C4","E4","F4","G4","E4","F4","G4"], duration: 0.3 }
 ];
 
-function playMelody(noteNames, noteDuration = 0.4) {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+let melodyAudioContext;
+
+async function playMelody(noteNames, noteDuration = 0.4) {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) {
+    throw new Error('Audio playback is not supported by this browser.');
+  }
+  if (!melodyAudioContext || melodyAudioContext.state === 'closed') {
+    melodyAudioContext = new AudioContextClass();
+  }
+  if (melodyAudioContext.state === 'suspended') {
+    await melodyAudioContext.resume();
+  }
+  const ctx = melodyAudioContext;
   let time = ctx.currentTime;
 
   noteNames.forEach(note => {

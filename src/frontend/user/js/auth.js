@@ -1,6 +1,5 @@
-const API_BASE_URL = '/api/auth';
+const API_BASE_URL = 'http://localhost:8080/api/auth';
 
-// 1. Sign Up (Registration)
 async function handleSignup(username, password) {
   try {
     const response = await fetch(`${API_BASE_URL}/signup`, {
@@ -15,7 +14,7 @@ async function handleSignup(username, password) {
 
     if (data.success) {
       alert('Account created successfully!');
-      window.location.href = 'signin.html'; // Signin page par bhej do
+      window.location.href = 'signin.html';
     } else {
       alert('Signup Failed: ' + data.message);
     }
@@ -25,7 +24,6 @@ async function handleSignup(username, password) {
   }
 }
 
-// 2. Sign In (Login)
 async function handleSignin(username, password) {
   try {
     const response = await fetch(`${API_BASE_URL}/signin`, {
@@ -41,7 +39,7 @@ async function handleSignin(username, password) {
     if (data.success) {
       alert('Login Successful!');
       localStorage.setItem('currentUser', data.username);
-      window.location.href = 'index.html'; // Home / Quiz page par redirect karein
+      window.location.href = 'index.html';
     } else {
       alert('Login Failed: ' + data.message);
     }
