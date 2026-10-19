@@ -27,6 +27,26 @@
     </div>
     <p id="dashboardError" class="admin-error" role="alert" hidden></p>
 
+    <section class="admin-panel admin-history-panel" aria-labelledby="loginHistoryTitle">
+      <div class="admin-history-header">
+        <h2 class="admin-subtitle" id="loginHistoryTitle">🔐 Recent Login History</h2>
+        <button class="btn-outline small-btn" type="button" onclick="loadLoginHistory()">Refresh</button>
+      </div>
+      <p id="loginHistoryError" class="admin-error" role="alert" hidden></p>
+      <div class="admin-history-scroll">
+        <table class="admin-history-table">
+          <thead>
+            <tr>
+              <th scope="col">Username</th>
+              <th scope="col">Date and time</th>
+              <th scope="col">Result</th>
+            </tr>
+          </thead>
+          <tbody id="loginHistoryBody"></tbody>
+        </table>
+      </div>
+    </section>
+
     <!-- 4 Category Cards -->
     <div class="admin-cat-grid" id="adminCatGrid"></div>
 

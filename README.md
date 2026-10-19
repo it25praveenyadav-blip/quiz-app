@@ -6,13 +6,18 @@ The app uses MySQL for local development. Install and start MySQL Server, then s
 
 ```powershell
 $env:SPRING_DATASOURCE_USERNAME = "root"
-$env:SPRING_DATASOURCE_PASSWORD = "your-MySQL-password"
+$secureDbPassword = Read-Host "MySQL password" -AsSecureString
+$env:SPRING_DATASOURCE_PASSWORD = [System.Net.NetworkCredential]::new("", $secureDbPassword).Password
+$secureAdminPassword = Read-Host "Admin password" -AsSecureString
+$env:ADMIN_PASSWORD = [System.Net.NetworkCredential]::new("", $secureAdminPassword).Password
 .\mvnw.cmd spring-boot:run
 ```
 
-By default, the app connects to `localhost:3306` and creates the `quiz_app` database if the MySQL user has permission. To use another host or database, set `SPRING_DATASOURCE_URL`; credentials can be supplied with `SPRING_DATASOURCE_USERNAME` and `SPRING_DATASOURCE_PASSWORD`. The app uses `ddl-auto=update` to create/update tables. The in-memory H2 database is only used by tests.
+The secure prompts keep passwords out of command history. The app connects to `localhost:3306` by default and creates the `quiz_app` database if the MySQL user has permission. To use another host or database, set `SPRING_DATASOURCE_URL`. The database password and admin password are required environment variables; neither has a source-code default. Never commit credentials to Git. Configure them in your terminal, IDE run configuration, or deployment secret manager. The app uses `ddl-auto=update` to create/update tables. The in-memory H2 database is only used by tests.
 
-Run the application with `.\mvnw.cmd spring-boot:run` and open `/admin/index.html` on the same server. The development admin password is `PASSWORD123`. Set the `ADMIN_PASSWORD` environment variable to use a different password before deployment.
+Run the application with `.\mvnw.cmd spring-boot:run` and open `/admin/index.html` on the same server. Use the value provided through `ADMIN_PASSWORD` to sign in to the admin panel.
+
+Every sign-in attempt is recorded in the MySQL `login_history` table with the submitted username, UTC timestamp, and success result. The authenticated admin dashboard shows the latest 100 attempts; failed attempts are included, and passwords are never stored in the history. The history endpoint is protected by the configured admin password.
 
 ## Deploying to Render
 

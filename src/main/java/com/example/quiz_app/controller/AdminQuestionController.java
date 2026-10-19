@@ -1,8 +1,10 @@
 package com.example.quiz_app.controller;
 
 import com.example.quiz_app.dto.AdminLoginRequest;
+import com.example.quiz_app.dto.LoginHistoryResponse;
 import com.example.quiz_app.dto.QuestionRequest;
 import com.example.quiz_app.dto.QuestionResponse;
+import com.example.quiz_app.service.LoginHistoryService;
 import com.example.quiz_app.service.QuizQuestionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,12 +28,15 @@ import java.util.List;
 public class AdminQuestionController {
 
     private final QuizQuestionService questionService;
+    private final LoginHistoryService loginHistoryService;
     private final byte[] adminPassword;
 
     public AdminQuestionController(
             QuizQuestionService questionService,
+            LoginHistoryService loginHistoryService,
             @Value("${app.admin.password}") String adminPassword) {
         this.questionService = questionService;
+        this.loginHistoryService = loginHistoryService;
         this.adminPassword = adminPassword.getBytes(StandardCharsets.UTF_8);
     }
 
@@ -40,6 +45,15 @@ public class AdminQuestionController {
         return passwordMatches(request.password())
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @GetMapping("/login-history")
+    public ResponseEntity<List<LoginHistoryResponse>> getLoginHistory(
+            @RequestHeader(value = "X-Admin-Password", required = false) String password) {
+        if (!passwordMatches(password)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(loginHistoryService.getRecentAttempts());
     }
 
     @GetMapping("/questions/{category:sports|temples|songs|economics}")

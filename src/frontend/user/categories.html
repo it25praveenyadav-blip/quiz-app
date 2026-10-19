@@ -7,17 +7,48 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/mobile.css">
 </head>
-<body class="levels-bg">
-  <a href="index.html" class="home-btn">🏠 Home</a>
-  <button id="musicToggleBtn" onclick="toggleBgMusic()" style="position:fixed; top:20px; right:20px; z-index:10; background:#1a1a3d; border:2px solid #00f5ff; color:#00f5ff; border-radius:50%; width:44px; height:44px; font-size:1.1rem; cursor:pointer;">🔊</button>
+<body class="levels-bg categories-screen">
+  <main class="category-app">
+    <div class="category-content">
+      <header class="category-welcome">
+        <div>
+          <p class="category-greeting" id="categoryGreeting">Hi, player</p>
+          <p class="category-tagline">Ready to learn something new?</p>
+        </div>
+        <div class="category-header-actions">
+          <button id="musicToggleBtn" class="category-music-button" type="button" onclick="toggleBgMusic()" aria-label="Toggle background music">🔊</button>
+          <a href="profile.html" class="category-avatar" id="categoryAvatar" aria-label="Open profile">P</a>
+        </div>
+      </header>
 
-  <div class="wood-frame" style="max-width:420px;">
-    <div class="parchment-inner">
-      <h2 class="wood-title">CHOOSE CATEGORY</h2>
-      <div class="wood-cat-grid" id="categoryGrid"></div>
+      <section class="category-stats" aria-label="Your progress">
+        <div class="category-stat-card">
+          <span class="category-stat-icon" aria-hidden="true">🏆</span>
+          <span class="category-stat-copy">
+            <span class="category-stat-label">Levels</span>
+            <strong id="categoryLevels">0</strong>
+          </span>
+        </div>
+        <div class="category-stat-card">
+          <span class="category-stat-icon" aria-hidden="true">🪙</span>
+          <span class="category-stat-copy">
+            <span class="category-stat-label">Points</span>
+            <strong id="categoryPoints">0</strong>
+          </span>
+        </div>
+      </section>
+
+      <section class="category-selection" aria-labelledby="categoryHeading">
+        <h1 id="categoryHeading">Let’s play</h1>
+        <div class="category-card-grid" id="categoryGrid"></div>
+      </section>
     </div>
-  </div>
+  </main>
 
+  <script src="js/sports.js"></script>
+  <script src="js/temples.js"></script>
+  <script src="js/songs.js"></script>
+  <script src="js/economics.js"></script>
   <script src="js/categories.js"></script>
   <script src="js/bgmusic.js"></script>
 </body>

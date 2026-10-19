@@ -2,6 +2,7 @@ package com.example.quiz_app.controller;
 
 import com.example.quiz_app.dto.AuthRequest;
 import com.example.quiz_app.dto.AuthResponse;
+import com.example.quiz_app.service.LoginHistoryService;
 import com.example.quiz_app.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private LoginHistoryService loginHistoryService;
 
     @PostMapping("/signup")
     public AuthResponse signup(@RequestBody AuthRequest request) {
@@ -48,6 +52,7 @@ public class AuthController {
                 request.getUsername(),
                 request.getPassword()
         );
+        loginHistoryService.recordAttempt(request.getUsername(), valid);
 
         if (!valid) {
             return new AuthResponse(

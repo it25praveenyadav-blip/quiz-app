@@ -73,7 +73,54 @@ async function showDashboard() {
     error.textContent = `Unable to load questions: ${err.message}`;
     error.hidden = false;
   }
+  await loadLoginHistory();
   renderCategoryCards();
+}
+
+async function loadLoginHistory() {
+  const historyError = document.getElementById('loginHistoryError');
+  const historyBody = document.getElementById('loginHistoryBody');
+  historyError.textContent = '';
+  historyError.hidden = true;
+
+  try {
+    const attempts = await adminRequest('/api/admin/login-history');
+    historyBody.replaceChildren();
+    if (attempts.length === 0) {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.className = 'admin-history-empty';
+      cell.colSpan = 3;
+      cell.textContent = 'No login attempts recorded yet.';
+      row.appendChild(cell);
+      historyBody.appendChild(row);
+      return;
+    }
+
+    attempts.forEach(attempt => {
+      const row = document.createElement('tr');
+      const username = document.createElement('td');
+      username.textContent = attempt.username;
+
+      const date = document.createElement('td');
+      date.textContent = new Intl.DateTimeFormat(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      }).format(new Date(attempt.attemptedAt));
+
+      const result = document.createElement('td');
+      result.className = attempt.successful
+        ? 'admin-history-result admin-history-success'
+        : 'admin-history-result admin-history-failed';
+      result.textContent = attempt.successful ? 'Successful' : 'Failed';
+
+      row.append(username, date, result);
+      historyBody.appendChild(row);
+    });
+  } catch (err) {
+    historyError.textContent = `Unable to load login history: ${err.message}`;
+    historyError.hidden = false;
+  }
 }
 
 function renderCategoryCards() {

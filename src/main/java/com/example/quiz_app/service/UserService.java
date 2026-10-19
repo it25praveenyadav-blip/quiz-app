@@ -26,7 +26,9 @@ public class UserService {
     }
 
     public boolean validateLogin(String username, String password) {
-
+        if (username == null || username.isBlank() || password == null) {
+            return false;
+        }
         return userRepository.findByUsername(username)
                 .map(user -> user.getPassword().equals(password))
                 .orElse(false);

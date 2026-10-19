@@ -1,5 +1,8 @@
 HELP.md
 target/
+.env
+.env.*
+!.env.example
 /quizdb.mv.db
 /quizdb.trace.db
 .mvn/wrapper/maven-wrapper.jar

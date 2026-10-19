@@ -43,16 +43,6 @@ function playSound(type) {
 }
 
 function loadQuestions() {
-  if (category === 'songs' && typeof generateSongQuestion === 'function') {
-    const perLevel = 6;
-    const firstQuestionIndex = (level - 1) * perLevel;
-    questions = Array.from({ length: perLevel }, (_, index) =>
-      generateSongQuestion(firstQuestionIndex + index)
-    );
-    showQuestion();
-    return;
-  }
-
   const bankMap = {
     sports: typeof sportsQuestions !== 'undefined' ? sportsQuestions : [],
     temples: typeof templesQuestions !== 'undefined' ? templesQuestions : [],
@@ -112,6 +102,8 @@ function showQuestion() {
     btn.className = 'wood-option-btn';
     btn.textContent = opt;
     btn.dataset.idx = idx;
+    btn.dataset.choice = String(idx + 1);
+    btn.setAttribute('aria-label', `${idx + 1}: ${opt}`);
     btn.onclick = () => selectAnswer(idx);
     grid.appendChild(btn);
   });

@@ -18,6 +18,72 @@ body.welcome-bg {
     padding: 64px 12px 24px;
   }
 
+  body.categories-screen {
+    min-height: 100svh;
+    padding: 10px;
+    background:
+      radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.22) 0 8px, transparent 9px),
+      radial-gradient(circle at 88% 72%, rgba(255, 255, 255, 0.18) 0 12px, transparent 13px),
+      linear-gradient(145deg, #10bdd2, #00a8bf 58%, #078da8);
+  }
+
+  .category-app {
+    width: min(100%, 440px);
+    min-height: calc(100svh - 20px);
+    padding: 9px;
+    border-width: 7px;
+    border-radius: 18px;
+  }
+
+  .category-content {
+    padding: 20px 13px;
+  }
+
+  body.quiz-screen {
+    padding-top: 108px;
+  }
+
+  .quiz-screen .quiz-toolbar {
+    top: 10px;
+    right: 68px;
+    left: 12px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-screen .quiz-coin-balance {
+    padding: 7px 9px;
+    font-size: 0.72rem;
+  }
+
+  .quiz-screen .quiz-coin-balance:last-child {
+    display: none;
+  }
+
+  .quiz-screen .quiz-frame {
+    width: 100%;
+    margin: 32px auto 20px;
+    padding: 22px 10px 12px;
+  }
+
+  .quiz-screen .quiz-panel {
+    padding: 22px 12px 14px;
+  }
+
+  .quiz-screen .quiz-question-text {
+    min-height: 76px;
+    font-size: 1rem;
+  }
+
+  .quiz-screen .wood-option-btn {
+    min-height: 46px;
+    font-size: 0.9rem;
+  }
+
+  .quiz-screen .question-ribbon {
+    min-width: 190px;
+    font-size: 1.35rem;
+  }
+
   .wood-frame,
   .level-panel,
   .puzzle-frame {
@@ -27,6 +93,12 @@ body.welcome-bg {
   .wood-frame,
   .puzzle-frame {
     margin: 20px auto;
+  }
+
+  .home-page .home-frame {
+    width: min(100%, 380px);
+    margin: 28px auto;
+    padding: 26px 20px;
   }
 
   .puzzle-frame {
