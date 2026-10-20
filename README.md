@@ -6,19 +6,17 @@ The app works locally with an in-memory H2 database by default, so you do not ne
 
 ```powershell
 $env:ADMIN_PASSWORD = "admin123"
-.
-\mvnw.cmd spring-boot:run
+.\mvnw.cmd spring-boot:run
 ```
 
-The app listens on `http://localhost:8081` by default to avoid port conflicts with other local services. If 8081 is already busy, start it with a different port:
+The app listens on port `8083` by default. Open the user pages at `http://localhost:8083/user/signin.html` and the admin panel at `http://localhost:8083/admin/index.html`. If port 8083 is already busy, stop the other app instance or choose another port:
 
 ```powershell
 $env:PORT = "9090"
-.
-\mvnw.cmd spring-boot:run
+.\mvnw.cmd spring-boot:run
 ```
 
-Then open `/admin/index.html` on that same port and sign in with the configured admin password.
+Open both pages on the same port so they use the same app instance and database.
 
 ## Render deploy
 
