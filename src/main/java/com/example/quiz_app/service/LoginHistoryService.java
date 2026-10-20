@@ -13,6 +13,8 @@ import java.util.List;
 public class LoginHistoryService {
 
     private static final int MAX_USERNAME_LENGTH = 255;
+    private static final String USER_LOGIN = "USER";
+    private static final String ADMIN_LOGIN = "ADMIN";
 
     private final LoginHistoryRepository loginHistoryRepository;
 
@@ -21,19 +23,34 @@ public class LoginHistoryService {
     }
 
     @Transactional
-    public void recordAttempt(String username, boolean successful) {
+    public void recordUserAttempt(String username, boolean successful) {
+        recordAttempt(username, successful, USER_LOGIN);
+    }
+
+    public void recordAdminAttempt(boolean successful) {
+        recordAttempt("admin", successful, ADMIN_LOGIN);
+    }
+
+    private void recordAttempt(String username, boolean successful, String loginType) {
         String recordedUsername = username == null || username.isBlank()
                 ? "(unknown)"
                 : username;
         if (recordedUsername.length() > MAX_USERNAME_LENGTH) {
             recordedUsername = recordedUsername.substring(0, MAX_USERNAME_LENGTH);
         }
-        loginHistoryRepository.save(new LoginHistory(recordedUsername, Instant.now(), successful));
+        loginHistoryRepository.save(new LoginHistory(
+                recordedUsername, Instant.now(), successful, loginType));
     }
 
     @Transactional(readOnly = true)
-    public List<LoginHistoryResponse> getRecentAttempts() {
-        return loginHistoryRepository.findTop100ByOrderByAttemptedAtDesc().stream()
+    public List<LoginHistoryResponse> getRecentUserAttempts() {
+        List<LoginHistory> attempts = new java.util.ArrayList<>(
+                loginHistoryRepository.findTop100ByLoginTypeOrderByAttemptedAtDesc(USER_LOGIN));
+        attempts.addAll(loginHistoryRepository
+                .findTop100ByLoginTypeIsNullAndUsernameNotIgnoreCaseOrderByAttemptedAtDesc("admin"));
+        return attempts.stream()
+                .sorted(java.util.Comparator.comparing(LoginHistory::getAttemptedAt).reversed())
+                .limit(100)
                 .map(attempt -> new LoginHistoryResponse(
                         attempt.getId(),
                         attempt.getUsername(),

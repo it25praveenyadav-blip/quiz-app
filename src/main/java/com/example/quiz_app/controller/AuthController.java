@@ -52,7 +52,7 @@ public class AuthController {
                 request.getUsername(),
                 request.getPassword()
         );
-        loginHistoryService.recordAttempt(request.getUsername(), valid);
+        loginHistoryService.recordUserAttempt(request.getUsername(), valid);
 
         if (!valid) {
             return new AuthResponse(

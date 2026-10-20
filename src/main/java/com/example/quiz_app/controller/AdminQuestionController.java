@@ -42,7 +42,9 @@ public class AdminQuestionController {
 
     @PostMapping("/login")
     public ResponseEntity<Void> login(@Valid @RequestBody AdminLoginRequest request) {
-        return passwordMatches(request.password())
+        boolean successful = passwordMatches(request.password());
+        loginHistoryService.recordAdminAttempt(successful);
+        return successful
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -53,7 +55,7 @@ public class AdminQuestionController {
         if (!passwordMatches(password)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return ResponseEntity.ok(loginHistoryService.getRecentAttempts());
+        return ResponseEntity.ok(loginHistoryService.getRecentUserAttempts());
     }
 
     @GetMapping("/questions/{category:sports|temples|songs|economics}")

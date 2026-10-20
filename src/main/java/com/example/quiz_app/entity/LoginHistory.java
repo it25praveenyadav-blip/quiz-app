@@ -29,13 +29,17 @@ public class LoginHistory {
     @Column(nullable = false)
     private boolean successful;
 
+    @Column(name = "login_type", length = 20)
+    private String loginType;
+
     protected LoginHistory() {
     }
 
-    public LoginHistory(String username, Instant attemptedAt, boolean successful) {
+    public LoginHistory(String username, Instant attemptedAt, boolean successful, String loginType) {
         this.username = username;
         this.attemptedAt = attemptedAt;
         this.successful = successful;
+        this.loginType = loginType;
     }
 
     public Long getId() {
@@ -52,5 +56,9 @@ public class LoginHistory {
 
     public boolean isSuccessful() {
         return successful;
+    }
+
+    public String getLoginType() {
+        return loginType;
     }
 }

@@ -60,9 +60,11 @@ class LoginHistoryIntegrationTests {
     }
 
     @Test
-    void recordsSuccessfulAndFailedSigninAndProtectsHistoryEndpoint() {
+    void recordsUserSigninSeparatelyAndProtectsUserHistoryEndpoint() {
         AuthResponse successfulSignin = authController.signin(request(TEST_USERNAME, "test-password"));
         AuthResponse failedSignin = authController.signin(request(TEST_USERNAME, "wrong-password"));
+        adminQuestionController.login(new com.example.quiz_app.dto.AdminLoginRequest(TEST_ADMIN_PASSWORD));
+        adminQuestionController.login(new com.example.quiz_app.dto.AdminLoginRequest("wrong-admin-password"));
 
         assertTrue(successfulSignin.isSuccess());
         assertFalse(failedSignin.isSuccess());
@@ -73,8 +75,9 @@ class LoginHistoryIntegrationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(2, response.getBody().size());
-        assertTrue(response.getBody().stream().allMatch(attempt ->
-                attempt.username().equals(TEST_USERNAME) && attempt.attemptedAt() != null));
+        assertTrue(response.getBody().stream().allMatch(attempt -> attempt.attemptedAt() != null));
+        assertEquals(2, response.getBody().stream()
+                .filter(attempt -> attempt.username().equals(TEST_USERNAME)).count());
         assertEquals(1, response.getBody().stream().filter(LoginHistoryResponse::successful).count());
         assertEquals(1, response.getBody().stream().filter(attempt -> !attempt.successful()).count());
     }

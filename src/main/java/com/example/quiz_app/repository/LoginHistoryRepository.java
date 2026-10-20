@@ -8,4 +8,9 @@ import java.util.List;
 public interface LoginHistoryRepository extends JpaRepository<LoginHistory, Long> {
 
     List<LoginHistory> findTop100ByOrderByAttemptedAtDesc();
+
+    List<LoginHistory> findTop100ByLoginTypeOrderByAttemptedAtDesc(String loginType);
+
+    List<LoginHistory> findTop100ByLoginTypeIsNullAndUsernameNotIgnoreCaseOrderByAttemptedAtDesc(
+            String username);
 }
