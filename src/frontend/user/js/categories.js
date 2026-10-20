@@ -12,7 +12,7 @@ const categories = [
 const grid = document.getElementById('categoryGrid');
 const greetingName = username === 'guest' ? 'Player' : username;
 document.getElementById('categoryGreeting').textContent = `Hi, ${greetingName}`;
-document.getElementById('categoryAvatar').textContent = greetingName.charAt(0).toUpperCase();
+profilePhotos.render(document.getElementById('categoryAvatar'), username, true);
 
 let totalCompletedLevels = 0;
 let totalPoints = 0;
@@ -47,7 +47,7 @@ categories.forEach(cat => {
 
   card.addEventListener('click', () => {
     localStorage.setItem('selectedCategory', cat.id);
-    window.location.href = 'levels.html';
+    window.location.href = cat.id === 'puzzle' ? 'puzzle-zone.html' : 'levels.html';
   });
 
   grid.appendChild(card);

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#392716">
 <title>Quiz Quest</title>
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/mobile.css">
@@ -12,37 +13,113 @@
     if (!localStorage.getItem('currentUser')) window.location.href = 'signin.html';
   </script>
 
-  <div class="home-menu">
-    <button class="wood-btn home-menu-toggle" id="homeMenuToggle" type="button"
-            aria-expanded="false" aria-controls="homeMenu">☰ Menu</button>
-    <nav class="home-menu-panel" id="homeMenu" aria-label="Home navigation" hidden>
-      <a href="categories.html">▶ Start Game</a>
-      <a href="profile.html">👤 Profile</a>
-      <a href="leaderboard.html">🏆 Scores</a>
-      <a href="settings.html">⚙️ Settings</a>
+  <header class="home-header">
+    <a class="home-brand" href="index.html" aria-label="Quiz Quest home">
+      <span class="home-brand-mark" aria-hidden="true">Q</span>
+      <span>Quiz <strong>Quest</strong></span>
+    </a>
+
+    <nav class="home-nav" aria-label="Main navigation">
+      <a class="is-current" href="index.html" aria-current="page">Home</a>
+      <a href="categories.html">Categories</a>
+      <a href="puzzle-zone.html">Puzzle Zone</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="#homeFeatures">About</a>
     </nav>
-  </div>
 
-  <button id="musicToggleBtn" onclick="toggleBgMusic()" style="position:fixed; top:20px; right:20px; z-index:10; background:#1a1a3d; border:2px solid #00f5ff; color:#00f5ff; border-radius:50%; width:44px; height:44px; font-size:1.1rem; cursor:pointer;">🔊</button>
-
-  <div class="wood-frame home-frame">
-    <div class="parchment-inner" style="text-align:center;">
-      <div style="font-size:2.5rem; margin-bottom:8px;">🎮</div>
-      <h1 class="wood-title" style="font-size:1.8rem;">QUIZ QUEST</h1>
-      <p id="userGreeting" style="color:#5a3a1a; font-size:0.9rem; margin-bottom:6px;"></p>
-      <p style="color:#6b5a3a; font-size:0.85rem; margin-bottom:20px;">Test your brain. Unlock every level.</p>
-
-      <button class="wood-btn-full" onclick="window.location.href='categories.html'">▶ START GAME</button>
-      <p style="color:#8a7a5a; font-size:0.75rem; margin-top:18px;">20 Levels • 4 Options Each • Beat Your Score</p>
+    <div class="home-account">
+      <button id="musicToggleBtn" class="home-music-button" type="button"
+              onclick="toggleBgMusic()" aria-label="Toggle background music">🔊</button>
+      <a class="home-profile-link" href="profile.html">
+        <span class="home-profile-avatar" id="homeAvatar">Q</span>
+        <span id="userGreeting">Profile</span>
+      </a>
     </div>
-  </div>
+  </header>
 
+  <main class="home-main">
+    <section class="home-hero" aria-labelledby="homeTitle">
+      <div class="home-hero-copy">
+        <p class="home-eyebrow"><span aria-hidden="true">✦</span> A LITTLE PLAY, A LOT TO LEARN</p>
+        <h1 id="homeTitle">Curiosity looks<br>good on <span>you.</span></h1>
+        <p class="home-intro">Take a quick quiz, discover a new topic, and see how far your knowledge can go.</p>
+        <div class="home-actions">
+          <a class="home-primary-button" href="categories.html">Choose a quiz <span aria-hidden="true">→</span></a>
+          <a class="home-secondary-link" href="leaderboard.html">See the leaderboard</a>
+        </div>
+        <p class="home-welcome">Good to see you, <strong id="homeWelcomeName">player</strong>.</p>
+      </div>
+
+      <div class="home-hero-board" aria-label="Four quiz categories to explore">
+        <div class="home-board-heading">
+          <span class="home-board-label">YOUR NEXT ROUND</span>
+          <span class="home-board-stamp" aria-hidden="true">PLAY</span>
+        </div>
+        <h2>Pick what sparks your interest.</h2>
+        <a class="home-topic" href="categories.html">
+          <span class="home-topic-icon" aria-hidden="true">⚽</span>
+          <span><strong>Sports</strong><small>Records, teams &amp; big moments</small></span>
+          <span class="home-topic-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="home-topic" href="categories.html">
+          <span class="home-topic-icon" aria-hidden="true">🏛️</span>
+          <span><strong>Temples</strong><small>Stories, places &amp; history</small></span>
+          <span class="home-topic-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="home-topic" href="categories.html">
+          <span class="home-topic-icon" aria-hidden="true">🎵</span>
+          <span><strong>Songs</strong><small>Music, artists &amp; lyrics</small></span>
+          <span class="home-topic-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="home-topic" href="categories.html">
+          <span class="home-topic-icon" aria-hidden="true">💰</span>
+          <span><strong>Economics</strong><small>Everyday money &amp; markets</small></span>
+          <span class="home-topic-arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="home-features" id="homeFeatures" aria-labelledby="homeFeaturesTitle">
+      <div class="home-section-heading">
+        <div>
+          <p class="home-eyebrow">MAKE EVERY ANSWER COUNT</p>
+          <h2 id="homeFeaturesTitle">Your kind of brain break.</h2>
+        </div>
+        <a href="categories.html">Find your first quiz <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="home-feature-grid">
+        <article class="home-feature-card">
+          <span class="home-feature-icon" aria-hidden="true">📚</span>
+          <h3>Something for everyone</h3>
+          <p>Explore different subjects and follow whatever catches your eye.</p>
+        </article>
+        <article class="home-feature-card">
+          <span class="home-feature-icon" aria-hidden="true">⏱️</span>
+          <h3>Play at your pace</h3>
+          <p>Take a short round whenever you feel like a little challenge.</p>
+        </article>
+        <article class="home-feature-card">
+          <span class="home-feature-icon" aria-hidden="true">🏆</span>
+          <h3>Keep your progress</h3>
+          <p>Track your scores, earn rewards, and celebrate getting better.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="home-footer">
+    <span>Quiz Quest</span>
+    <span>Small steps. New things learned.</span>
+    <a href="profile.html">Your profile</a>
+  </footer>
+
+  <script src="js/profile-photo.js"></script>
   <script>
-    document.getElementById('userGreeting').textContent =
-      'Welcome, ' + localStorage.getItem('currentUser');
+    const username = localStorage.getItem('currentUser') || 'player';
+    document.getElementById('userGreeting').textContent = username;
+    document.getElementById('homeWelcomeName').textContent = username;
+    profilePhotos.render(document.getElementById('homeAvatar'), username, true);
   </script>
-
-  <script src="js/home-menu.js"></script>
   <script src="js/bgmusic.js"></script>
 </body>
 </html>

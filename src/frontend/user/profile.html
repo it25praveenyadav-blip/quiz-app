@@ -14,7 +14,14 @@
   <div class="wood-frame">
     <div class="parchment-inner" style="text-align:center;">
       <h2 class="wood-title">👤 PROFILE</h2>
+      <div class="profile-photo-frame" id="profilePhotoFrame"></div>
       <p id="profileName" style="color:#5a3a1a; font-weight:bold; margin-bottom:15px;"></p>
+      <div class="profile-photo-controls">
+        <input class="profile-photo-input" id="profilePhotoInput" type="file" accept="image/*" aria-describedby="profilePhotoMessage">
+        <label class="wood-btn profile-photo-pick" for="profilePhotoInput">Choose a photo</label>
+        <button class="wood-btn profile-photo-remove" id="removeProfilePhoto" type="button">Remove photo</button>
+      </div>
+      <p class="profile-photo-message" id="profilePhotoMessage" role="status" aria-live="polite"></p>
       <div class="stats-grid" id="statsGrid"></div>
       <h3 style="margin:18px 0 8px; color:#a06818;">Badges</h3>
       <div class="badges-grid" id="badgesGrid"></div>
@@ -22,6 +29,7 @@
     </div>
   </div>
 
+  <script src="js/profile-photo.js"></script>
   <script src="js/profile.js"></script>
   <script src="js/bgmusic.js"></script>
 </body>

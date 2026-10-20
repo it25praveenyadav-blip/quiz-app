@@ -11,11 +11,158 @@ body.welcome-bg {
   background-attachment: fixed;
 }
 
+body.home-page {
+  padding: 0;
+}
+
+body.home-page.levels-bg {
+  background-color: #392716;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(240, 209, 147, 0.16), transparent 48%),
+    linear-gradient(145deg, #49331f, #2b2018 62%, #372617);
+  background-position: center top;
+  background-size: auto;
+  background-repeat: repeat;
+  background-attachment: fixed;
+}
+
+.home-header {
+  padding-right: 24px;
+  padding-left: 24px;
+}
+
+.home-hero {
+  gap: 36px;
+}
+
 @media (max-width: 480px) {
   body {
     min-height: 100svh;
     justify-content: flex-start;
     padding: 64px 12px 24px;
+  }
+
+  body.home-page {
+    padding: 0;
+  }
+
+  .home-header {
+    min-height: auto;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .home-brand {
+    font-size: 1.22rem;
+  }
+
+  .home-brand-mark {
+    width: 34px;
+    height: 34px;
+  }
+
+  .home-account {
+    margin-left: auto;
+  }
+
+  .home-profile-link {
+    max-width: 116px;
+    font-size: 0.8rem;
+  }
+
+  .home-nav {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+    overflow-x: auto;
+  }
+
+  .home-nav a {
+    flex: 0 0 auto;
+    padding: 6px 0 8px;
+    font-size: 0.78rem;
+  }
+
+  .home-main {
+    width: min(100% - 28px, 560px);
+  }
+
+  .home-hero {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    min-height: 0;
+    padding: 40px 0 32px;
+  }
+
+  .home-hero-copy h1 {
+    font-size: clamp(2.65rem, 12vw, 3.6rem);
+  }
+
+  .home-intro {
+    font-size: 0.98rem;
+  }
+
+  .home-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 17px;
+    margin-top: 22px;
+  }
+
+  .home-welcome {
+    margin-top: 21px;
+  }
+
+  .home-hero-board {
+    padding: 19px 14px;
+    border-width: 6px;
+  }
+
+  .home-hero-board h2 {
+    font-size: 1.45rem;
+  }
+
+  .home-topic {
+    min-height: 58px;
+    gap: 9px;
+    padding-right: 6px;
+    padding-left: 4px;
+  }
+
+  .home-topic small {
+    font-size: 0.7rem;
+  }
+
+  .home-features {
+    padding: 25px 0 32px;
+  }
+
+  .home-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .home-feature-grid {
+    grid-template-columns: 1fr;
+    gap: 11px;
+  }
+
+  .home-feature-card {
+    min-height: 0;
+    padding: 16px;
+  }
+
+  .home-feature-icon {
+    margin-bottom: 7px;
+  }
+
+  .home-footer {
+    flex-wrap: wrap;
+    padding: 14px;
+    font-size: 0.74rem;
   }
 
   body.categories-screen {

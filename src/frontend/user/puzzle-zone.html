@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>Puzzle Zone - Quiz Quest</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/mobile.css">
+<link rel="stylesheet" href="css/puzzle-zone.css">
+</head>
+<body class="puzzle-zone-page">
+  <header class="pz-header">
+    <a class="pz-back" href="categories.html" aria-label="Back to categories">← <span>Categories</span></a>
+    <a class="pz-brand" href="index.html">Quiz <strong>Quest</strong></a>
+    <div class="pz-header-user" id="puzzleUser"></div>
+  </header>
+
+  <main class="pz-main">
+    <section class="pz-intro" id="pzIntro">
+      <p class="pz-kicker">THINK A LITTLE DIFFERENT</p>
+      <h1>Puzzle <span>Zone</span></h1>
+      <p>Ten quick challenges for your brain. Pick a game, choose a difficulty and see how far you get.</p>
+      <div class="pz-summary" aria-label="Your puzzle progress">
+        <div><strong id="pzGamesPlayed">0</strong><span>Games played</span></div>
+        <div><strong id="pzBestScore">0</strong><span>Best score</span></div>
+        <div><strong id="pzCompleted">0 / 10</strong><span>Games completed</span></div>
+      </div>
+    </section>
+
+    <section class="pz-menu" id="pzMenu" aria-label="Puzzle games">
+      <div class="pz-section-heading">
+        <h2>Choose a challenge</h2>
+        <label class="pz-sound-toggle">
+          <input type="checkbox" id="pzSoundToggle" checked>
+          <span aria-hidden="true">♪</span> Sound
+        </label>
+      </div>
+      <div class="pz-game-grid" id="pzGameGrid"></div>
+      <a class="pz-classic-link" href="levels.html" id="pzClassicLink">Also play the classic 30-level slider puzzle →</a>
+    </section>
+
+    <section class="pz-play" id="pzPlay" hidden aria-live="polite">
+      <div class="pz-play-heading">
+        <button class="pz-text-button" id="pzBackToMenu" type="button">← All games</button>
+        <div class="pz-play-title">
+          <p class="pz-kicker" id="pzGameCategory"></p>
+          <h2 id="pzGameTitle"></h2>
+        </div>
+        <button class="pz-icon-button" id="pzMuteButton" type="button" aria-pressed="false" aria-label="Mute game sounds">♪</button>
+      </div>
+
+      <div class="pz-start-panel" id="pzStartPanel">
+        <p id="pzGameDescription"></p>
+        <div class="pz-howto" id="pzInstructions"></div>
+        <label class="pz-difficulty-label" for="pzDifficulty">Difficulty</label>
+        <select id="pzDifficulty">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+        <button class="pz-button pz-button-primary" id="pzStartButton" type="button">Start game</button>
+      </div>
+
+      <div class="pz-game-panel" id="pzGamePanel" hidden>
+        <div class="pz-hud">
+          <div><span>Score</span><strong id="pzScore">0</strong></div>
+          <div><span>Progress</span><strong id="pzProgress">0 / 0</strong></div>
+          <div><span>Time</span><strong id="pzTimer">00:00</strong></div>
+          <button class="pz-button pz-button-muted" id="pzPauseButton" type="button">Pause</button>
+        </div>
+        <div class="pz-feedback" id="pzFeedback" role="status" aria-live="polite"></div>
+        <div class="pz-board" id="pzBoard"></div>
+        <div class="pz-game-actions" id="pzGameActions"></div>
+      </div>
+    </section>
+
+    <section class="pz-results" id="pzResults" hidden aria-live="polite">
+      <p class="pz-kicker">ROUND COMPLETE</p>
+      <h2 id="pzResultTitle">Nice work!</h2>
+      <div class="pz-result-score"><strong id="pzFinalScore">0</strong><span>points</span></div>
+      <p id="pzResultDetails"></p>
+      <div class="pz-result-actions">
+        <button class="pz-button pz-button-primary" id="pzPlayAgain" type="button">Play again</button>
+        <button class="pz-button pz-button-muted" id="pzResultMenu" type="button">Back to games</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="pz-pause-layer" id="pzPauseLayer" hidden>
+    <section class="pz-pause-card" role="dialog" aria-modal="true" aria-labelledby="pzPauseTitle">
+      <p class="pz-kicker">TAKE YOUR TIME</p>
+      <h2 id="pzPauseTitle">Game paused</h2>
+      <p>Your timer is stopped while you take a break.</p>
+      <button class="pz-button pz-button-primary" id="pzResumeButton" type="button">Resume game</button>
+      <button class="pz-text-button" id="pzPauseExitButton" type="button">Exit to games</button>
+    </section>
+  </div>
+
+  <script src="js/puzzle-zone.js"></script>
+</body>
+</html>
