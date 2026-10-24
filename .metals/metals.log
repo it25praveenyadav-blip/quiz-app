@@ -4271,3 +4271,46 @@ WARNING: Unmatched cancel notification for request id 53
 2026.10.20 11:54:20 INFO  Memory monitor stopped
 2026.10.20 11:54:20 INFO  shutting down Metals
 2026.10.20 11:54:22 INFO  Shut down connection with build server.
+2026.10.20 12:18:30 INFO  Started: Metals version 1.6.9+31-a1a789a6-SNAPSHOT in folders 'C:\Users\USER\Downloads\quiz-app' for client Visual Studio Code 1.142.0.
+2026.10.20 12:18:30 INFO  Memory monitor started
+2026.10.20 12:18:31 WARN  Using H2 2.5.252 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026.10.20 12:18:31 INFO  no build target found for C:\Users\USER\Downloads\quiz-app\src\test\java\com\example\quiz_app\LoginHistoryIntegrationTests.java. Using fallback presentation compiler.
+2026.10.20 12:18:32 INFO  Attempting to connect to the build server...
+2026.10.20 12:18:32 INFO  No running Bloop server found, starting one.
+Oct 20, 2026 12:18:32 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 2
+2026.10.20 12:18:31 INFO  no build target found for C:\Users\USER\Downloads\quiz-app\src\test\java\com\example\quiz_app\LoginHistoryIntegrationTests.java. Using fallback presentation compiler.
+2026.10.20 12:18:33 INFO  no build target found for C:\Users\USER\Downloads\quiz-app\src\test\java\com\example\quiz_app\LoginHistoryIntegrationTests.java. Using fallback presentation compiler.
+2026.10.20 12:18:33 INFO  no build target found for C:\Users\USER\Downloads\quiz-app\src\test\java\com\example\quiz_app\LoginHistoryIntegrationTests.java. Using fallback presentation compiler.
+2026.10.20 12:18:33 INFO  no build target found for C:\Users\USER\Downloads\quiz-app\src\test\java\com\example\quiz_app\LoginHistoryIntegrationTests.java. Using fallback presentation compiler.
+2026.10.20 12:18:33 INFO  no build target found for C:\Users\USER\Downloads\quiz-app\src\test\java\com\example\quiz_app\LoginHistoryIntegrationTests.java. Using fallback presentation compiler.
+2026.10.20 12:18:34 INFO  Starting compilation server
+2026.10.20 12:18:34 INFO  no build target found for C:\Users\USER\Downloads\quiz-app\src\test\java\com\example\quiz_app\LoginHistoryIntegrationTests.java. Using fallback presentation compiler.
+Oct 20, 2026 12:18:34 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 11
+2026.10.20 12:18:35 INFO  no build target found for C:\Users\USER\Downloads\quiz-app\src\test\java\com\example\quiz_app\LoginHistoryIntegrationTests.java. Using fallback presentation compiler.
+2026.10.20 12:18:34 INFO  no build target found for C:\Users\USER\Downloads\quiz-app\src\test\java\com\example\quiz_app\LoginHistoryIntegrationTests.java. Using fallback presentation compiler.
+2026.10.20 12:18:38 INFO  Tracing is disabled for protocol BSP. To enable tracing of incoming and outgoing JSON messages, create an empty file at C:\Users\USER\Downloads\quiz-app\.metals\bsp.trace.json or C:\Users\USER\AppData\Local\scalameta\metals\cache\bsp.trace.json
+2026.10.20 12:18:39 INFO  no build target found for C:\Users\USER\Downloads\quiz-app\src\test\java\com\example\quiz_app\LoginHistoryIntegrationTests.java. Using fallback presentation compiler.
+2026.10.20 12:18:40 INFO  time: Connected to build server in 8.07s
+2026.10.20 12:18:40 INFO  Connected to Build server: Bloop v2.1.2
+2026.10.20 12:18:40 INFO  time: Imported build in 0.19s
+2026.10.20 12:18:48 WARN  Using H2 2.5.252 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026.10.20 12:18:49 INFO  time: indexed workspace in 9.53s
+2026.10.20 12:19:18 INFO  Shutting down server
+2026.10.20 12:19:18 INFO  Memory monitor stopped
+2026.10.20 12:19:18 INFO  shutting down Metals
+2026.10.20 12:19:18 INFO  Shut down connection with build server.
+2026.10.20 12:19:18 INFO  Exiting server
+2026.10.24 08:17:30 INFO  Started: Metals version 1.6.9+31-a1a789a6-SNAPSHOT in folders 'C:\Users\USER\Downloads\quiz-app' for client Visual Studio Code 1.142.0.
+2026.10.24 08:17:30 INFO  Memory monitor started
+2026.10.24 08:17:30 WARN  Using H2 2.5.252 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026.10.24 08:17:31 INFO  Attempting to connect to the build server...
+2026.10.24 08:17:31 INFO  No running Bloop server found, starting one.
+2026.10.24 08:17:33 INFO  Starting compilation server
+2026.10.24 08:17:35 INFO  Tracing is disabled for protocol BSP. To enable tracing of incoming and outgoing JSON messages, create an empty file at C:\Users\USER\Downloads\quiz-app\.metals\bsp.trace.json or C:\Users\USER\AppData\Local\scalameta\metals\cache\bsp.trace.json
+2026.10.24 08:17:36 INFO  time: Connected to build server in 5.19s
+2026.10.24 08:17:36 INFO  Connected to Build server: Bloop v2.1.2
+2026.10.24 08:17:36 INFO  time: Imported build in 0.37s
+2026.10.24 08:17:41 WARN  Using H2 2.5.252 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026.10.24 08:17:43 INFO  time: indexed workspace in 6.6s

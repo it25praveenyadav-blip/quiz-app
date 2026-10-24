@@ -3,100 +3,239 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1020">
-<title>Puzzle Zone - Quiz Quest</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/mobile.css">
-<link rel="stylesheet" href="css/puzzle-zone.css">
+<title>Puzzle Zone</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; justify-content: center; padding: 24px 12px;
+    font-family: 'Trebuchet MS', 'Segoe UI', sans-serif; color: #3b2412;
+    background-color: #1c1840;
+    background-image:
+      linear-gradient(180deg, rgba(0,0,0,.35) 0 6px, transparent 6px),
+      linear-gradient(90deg, rgba(0,0,0,.35) 0 6px, transparent 6px),
+      radial-gradient(circle at 15% 25%, rgba(190,60,200,.28), transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(40,200,210,.22), transparent 40%);
+    background-size: 120px 60px, 120px 60px, auto, auto;
+  }
+  .frame {
+    width: 100%; max-width: 460px; height: fit-content; padding: 12px; border-radius: 30px;
+    background: linear-gradient(#a8693a, #6b4423); border: 3px solid #c98f3c;
+    box-shadow: 0 14px 30px rgba(0,0,0,.5);
+  }
+  .panel { background: linear-gradient(160deg, #ebdfc0, #ddd0ab); border-radius: 20px; padding: 20px; min-height: 420px; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+  h1 { margin: 0; font-size: 24px; }
+  .sub { font-size: 12px; opacity: .7; }
+  .back { text-decoration: none; font-size: 13px; }
+  .stats {
+    display: flex; justify-content: space-around; padding: 10px 6px; margin-bottom: 14px; border-radius: 14px;
+    background: linear-gradient(#7a4c27, #5a3519); color: #ffe27a; text-align: center; border: 2px solid #a8693a;
+  }
+  .stats small { display: block; font-size: 11px; color: #fff3c4; }
+  .stats b { font-size: 17px; }
+  .btn {
+    cursor: pointer; font: inherit; font-weight: 700; color: #3b2412; padding: 8px 12px; border-radius: 10px;
+    background: linear-gradient(#ffe070, #e0a830); border: 2px solid #9a5f1a; box-shadow: 0 3px 0 #8a5217;
+  }
+  .btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #8a5217; }
+  .btn.active { background: linear-gradient(#e0a830, #c98d1f); }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .card { background: rgba(255,255,255,.4); border: 2px solid #b98a4a; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+  .card h3 { margin: 0 0 6px; font-size: 16px; }
+  .card p { margin: 0 0 8px; font-size: 14px; }
+  .meta { font-size: 12px; opacity: .75; margin-bottom: 8px; }
+  .row { display: flex; gap: 8px; }
+  input { flex: 1; min-width: 0; padding: 8px 10px; border-radius: 8px; border: 2px solid #b98a4a; background: #fff8e6; font: inherit; }
+  .msg { margin-top: 8px; font-size: 13px; font-weight: 700; }
+  .ok { color: #2f6b34; } .bad { color: #a83030; }
+  .locked { opacity: .55; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+  .tile {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer;
+    border-radius: 10px; border: 2px solid #9a5f1a; background: linear-gradient(#a8693a, #6b4423); color: transparent;
+    user-select: none;
+  }
+  .tile.up { background: #fff8e6; color: inherit; }
+  .tile.done { background: #cfe8c4; color: inherit; border-color: #2f6b34; cursor: default; }
+  .row-board { display: flex; justify-content: space-between; padding: 8px 4px; border-bottom: 1px dashed #b98a4a; font-size: 14px; }
+</style>
 </head>
-<body class="puzzle-zone-page">
-  <header class="pz-header">
-    <a class="pz-back" href="categories.html" aria-label="Back to categories">← <span>Categories</span></a>
-    <a class="pz-brand" href="index.html">Quiz <strong>Quest</strong></a>
-    <div class="pz-header-user" id="puzzleUser"></div>
+<body>
+<div class="frame"><div class="panel">
+  <header>
+    <div>
+      <h1>🧩 Puzzle Zone</h1>
+      <div class="sub" id="who">Ready to solve something?</div>
+    </div>
+    <a class="btn back" href="index.html">← Back</a>
   </header>
 
-  <main class="pz-main">
-    <section class="pz-intro" id="pzIntro">
-      <p class="pz-kicker">THINK A LITTLE DIFFERENT</p>
-      <h1>Puzzle <span>Zone</span></h1>
-      <p>Ten quick challenges for your brain. Pick a game, choose a difficulty and see how far you get.</p>
-      <div class="pz-summary" aria-label="Your puzzle progress">
-        <div><strong id="pzGamesPlayed">0</strong><span>Games played</span></div>
-        <div><strong id="pzBestScore">0</strong><span>Best score</span></div>
-        <div><strong id="pzCompleted">0 / 10</strong><span>Games completed</span></div>
-      </div>
-    </section>
-
-    <section class="pz-menu" id="pzMenu" aria-label="Puzzle games">
-      <div class="pz-section-heading">
-        <h2>Choose a challenge</h2>
-        <label class="pz-sound-toggle">
-          <input type="checkbox" id="pzSoundToggle" checked>
-          <span aria-hidden="true">♪</span> Sound
-        </label>
-      </div>
-      <div class="pz-game-grid" id="pzGameGrid"></div>
-      <a class="pz-classic-link" href="levels.html" id="pzClassicLink">Also play the classic 30-level slider puzzle →</a>
-    </section>
-
-    <section class="pz-play" id="pzPlay" hidden aria-live="polite">
-      <div class="pz-play-heading">
-        <button class="pz-text-button" id="pzBackToMenu" type="button">← All games</button>
-        <div class="pz-play-title">
-          <p class="pz-kicker" id="pzGameCategory"></p>
-          <h2 id="pzGameTitle"></h2>
-        </div>
-        <button class="pz-icon-button" id="pzMuteButton" type="button" aria-pressed="false" aria-label="Mute game sounds">♪</button>
-      </div>
-
-      <div class="pz-start-panel" id="pzStartPanel">
-        <p id="pzGameDescription"></p>
-        <div class="pz-howto" id="pzInstructions"></div>
-        <label class="pz-difficulty-label" for="pzDifficulty">Difficulty</label>
-        <select id="pzDifficulty">
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
-        </select>
-        <button class="pz-button pz-button-primary" id="pzStartButton" type="button">Start game</button>
-      </div>
-
-      <div class="pz-game-panel" id="pzGamePanel" hidden>
-        <div class="pz-hud">
-          <div><span>Score</span><strong id="pzScore">0</strong></div>
-          <div><span>Progress</span><strong id="pzProgress">0 / 0</strong></div>
-          <div><span>Time</span><strong id="pzTimer">00:00</strong></div>
-          <button class="pz-button pz-button-muted" id="pzPauseButton" type="button">Pause</button>
-        </div>
-        <div class="pz-feedback" id="pzFeedback" role="status" aria-live="polite"></div>
-        <div class="pz-board" id="pzBoard"></div>
-        <div class="pz-game-actions" id="pzGameActions"></div>
-      </div>
-    </section>
-
-    <section class="pz-results" id="pzResults" hidden aria-live="polite">
-      <p class="pz-kicker">ROUND COMPLETE</p>
-      <h2 id="pzResultTitle">Nice work!</h2>
-      <div class="pz-result-score"><strong id="pzFinalScore">0</strong><span>points</span></div>
-      <p id="pzResultDetails"></p>
-      <div class="pz-result-actions">
-        <button class="pz-button pz-button-primary" id="pzPlayAgain" type="button">Play again</button>
-        <button class="pz-button pz-button-muted" id="pzResultMenu" type="button">Back to games</button>
-      </div>
-    </section>
-  </main>
-
-  <div class="pz-pause-layer" id="pzPauseLayer" hidden>
-    <section class="pz-pause-card" role="dialog" aria-modal="true" aria-labelledby="pzPauseTitle">
-      <p class="pz-kicker">TAKE YOUR TIME</p>
-      <h2 id="pzPauseTitle">Game paused</h2>
-      <p>Your timer is stopped while you take a break.</p>
-      <button class="pz-button pz-button-primary" id="pzResumeButton" type="button">Resume game</button>
-      <button class="pz-text-button" id="pzPauseExitButton" type="button">Exit to games</button>
-    </section>
+  <div class="stats">
+    <div><small>Levels</small><b id="sSolved">0</b></div>
+    <div><small>Points</small><b id="sXp">0</b></div>
+    <div><small>Coins</small><b id="sCoins">0</b></div>
+    <div><small>Streak</small><b id="sStreak">0</b></div>
   </div>
 
-  <script src="js/puzzle-zone.js"></script>
+  <div class="tabs" id="tabs">
+    <button class="btn" data-t="BRAIN">🧠 Brain</button>
+    <button class="btn" data-t="ESCAPE">🚪 Escape</button>
+    <button class="btn" data-t="MEMORY">🃏 Memory</button>
+    <button class="btn" data-t="DAILY">📅 Daily</button>
+    <button class="btn" data-t="BOARD">🏆 Board</button>
+  </div>
+
+  <div id="view"></div>
+</div></div>
+
+<script>
+const API = "/api";   // same server par chal raha hai, isliye relative path
+const KEYS = ["username", "user", "currentUser", "loggedInUser"]; // apne login wali key yahan add karo
+
+function getUser() {
+  for (const st of [localStorage, sessionStorage]) {
+    for (const k of KEYS) {
+      const v = st.getItem(k);
+      if (!v) continue;
+      try {
+        const o = JSON.parse(v);
+        if (typeof o === "string") return o;
+        if (o && o.username) return o.username;
+        continue;
+      } catch (e) { return v; }
+    }
+  }
+  return null;
+}
+
+const user = getUser();
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let state = { solved: [] };
+
+async function api(path, opts) {
+  const r = await fetch(API + path, opts);
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+async function loadStats() {
+  const s = await api(`/progress/${encodeURIComponent(user)}`);
+  state = s;
+  $("sSolved").textContent = s.solved.length;
+  $("sXp").textContent = s.xp;
+  $("sCoins").textContent = s.coins;
+  $("sStreak").textContent = s.streak;
+}
+
+function setTab(t) {
+  document.querySelectorAll("#tabs .btn").forEach(b => b.classList.toggle("active", b.dataset.t === t));
+}
+
+async function show(t) {
+  setTab(t);
+  $("view").innerHTML = "Loading...";
+  try {
+    if (t === "BOARD") return showBoard();
+    if (t === "MEMORY") return showMemory();
+    await loadStats();
+    let list;
+    if (t === "DAILY") list = [await api("/puzzles/daily")];
+    else list = await api(`/puzzles?type=${t}`);
+    $("view").innerHTML = list.map((p, i) => {
+      const prev = t === "ESCAPE" && i > 0 ? list[i - 1] : null;
+      const locked = prev && !state.solved.includes(prev.id);
+      const done = state.solved.includes(p.id);
+      return `<div class="card ${locked ? "locked" : ""}">
+        <h3>${locked ? "🔒" : done ? "✅" : t === "ESCAPE" ? "🔑" : "❓"} ${esc(p.title)}</h3>
+        <p>${locked ? "Pichla room solve karke ise unlock karo." : esc(p.question)}</p>
+        <div class="meta">Hint: ${esc(p.hint)} · +${p.xp} XP · +${p.coins} coins</div>
+        ${locked ? "" : `<div class="row"><input id="a${p.id}" placeholder="Your answer">
+        <button class="btn" onclick="solve(${p.id}, '${t}')">Submit</button></div>
+        <div class="msg" id="r${p.id}"></div>`}
+      </div>`;
+    }).join("") || "<div class='card'>Abhi koi puzzle nahi hai.</div>";
+  } catch (e) {
+    $("view").innerHTML = "<div class='card bad'>Server connect nahi ho paya. Spring Boot chal raha hai?</div>";
+  }
+}
+
+async function solve(id, t) {
+  const answer = $("a" + id).value;
+  const out = $("r" + id);
+  try {
+    const res = await api(`/puzzles/${id}/solve`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: user, answer })
+    });
+    if (res.locked) out.innerHTML = '<span class="bad">🔒 Pehle pichla room solve karo</span>';
+    else if (res.already) out.innerHTML = '<span class="ok">Already solved</span>';
+    else if (res.correct) { out.innerHTML = `<span class="ok">Sahi! +${res.xp} XP, +${res.coins} coins</span>`; setTimeout(() => show(t), 1200); }
+    else out.innerHTML = '<span class="bad">Galat answer, phir try karo</span>';
+    loadStats();
+  } catch (e) { out.innerHTML = '<span class="bad">Server error</span>'; }
+}
+
+async function showBoard() {
+  const rows = await api("/leaderboard");
+  $("view").innerHTML = "<div class='card'>" + (rows.map((r, i) =>
+    `<div class="row-board"><span>${["🥇","🥈","🥉"][i] || i + 1 + "."} ${esc(r.username)}</span><span>${r.xp} XP · ${r.solved} levels</span></div>`
+  ).join("") || "Abhi koi player nahi.") + "</div>";
+}
+
+/* ---------- Memory Match ---------- */
+let mem;
+function showMemory() {
+  const icons = ["🏆","⚽","🎵","💰","🛕","🧩","🔑","⭐"];
+  const deck = [...icons, ...icons].sort(() => Math.random() - 0.5);
+  mem = { deck, open: [], matched: 0, moves: 0, seconds: 0, timer: null, lock: false };
+  $("view").innerHTML = `<div class="card">
+    <h3>🃏 Memory Match</h3>
+    <div class="meta">Moves: <b id="mMoves">0</b> · Time: <b id="mTime">0</b>s · Kam moves = zyada XP</div>
+    <div class="grid">${deck.map((c, i) => `<div class="tile" id="t${i}" onclick="flip(${i})">${c}</div>`).join("")}</div>
+    <button class="btn" onclick="showMemory()">New game</button>
+    <div class="msg" id="mMsg"></div></div>`;
+  clearInterval(window._memTimer);
+}
+
+function flip(i) {
+  const el = $("t" + i);
+  if (mem.lock || el.classList.contains("up") || el.classList.contains("done")) return;
+  if (!mem.timer) { mem.timer = setInterval(() => { mem.seconds++; $("mTime").textContent = mem.seconds; }, 1000); window._memTimer = mem.timer; }
+  el.classList.add("up"); mem.open.push(i);
+  if (mem.open.length < 2) return;
+  mem.moves++; $("mMoves").textContent = mem.moves;
+  const [a, b] = mem.open; mem.open = [];
+  if (mem.deck[a] === mem.deck[b]) {
+    ["t" + a, "t" + b].forEach(id => { $(id).classList.remove("up"); $(id).classList.add("done"); });
+    if (++mem.matched === 8) finishMemory();
+  } else {
+    mem.lock = true;
+    setTimeout(() => { $("t" + a).classList.remove("up"); $("t" + b).classList.remove("up"); mem.lock = false; }, 700);
+  }
+}
+
+async function finishMemory() {
+  clearInterval(mem.timer);
+  try {
+    const r = await api("/memory/complete", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: user, moves: mem.moves, seconds: mem.seconds })
+    });
+    $("mMsg").innerHTML = `<span class="ok">Done! ${mem.moves} moves, ${mem.seconds}s → +${r.xp} XP, +${r.coins} coins</span>`;
+    loadStats();
+  } catch (e) { $("mMsg").innerHTML = '<span class="bad">Score save nahi hua</span>'; }
+}
+
+/* ---------- start ---------- */
+document.querySelectorAll("#tabs .btn").forEach(b => b.onclick = () => show(b.dataset.t));
+if (!user) {
+  $("view").innerHTML = "<div class='card bad'>Pehle login karo, phir puzzles khelo.</div>";
+} else {
+  $("who").textContent = "Hi, " + user;
+  loadStats().catch(() => {});
+  show("BRAIN");
+}
+</script>
 </body>
 </html>
