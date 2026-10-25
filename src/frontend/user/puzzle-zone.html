@@ -5,200 +5,169 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Puzzle Zone</title>
 <style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; min-height: 100vh; display: flex; justify-content: center; padding: 24px 12px;
-    font-family: 'Trebuchet MS', 'Segoe UI', sans-serif; color: #3b2412;
-    background-color: #1c1840;
-    background-image:
-      linear-gradient(180deg, rgba(0,0,0,.35) 0 6px, transparent 6px),
-      linear-gradient(90deg, rgba(0,0,0,.35) 0 6px, transparent 6px),
-      radial-gradient(circle at 15% 25%, rgba(190,60,200,.28), transparent 40%),
-      radial-gradient(circle at 85% 75%, rgba(40,200,210,.22), transparent 40%);
-    background-size: 120px 60px, 120px 60px, auto, auto;
-  }
-  .frame {
-    width: 100%; max-width: 460px; height: fit-content; padding: 12px; border-radius: 30px;
-    background: linear-gradient(#a8693a, #6b4423); border: 3px solid #c98f3c;
-    box-shadow: 0 14px 30px rgba(0,0,0,.5);
-  }
-  .panel { background: linear-gradient(160deg, #ebdfc0, #ddd0ab); border-radius: 20px; padding: 20px; min-height: 420px; }
-  header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
-  h1 { margin: 0; font-size: 24px; }
-  .sub { font-size: 12px; opacity: .7; }
-  .back { text-decoration: none; font-size: 13px; }
-  .stats {
-    display: flex; justify-content: space-around; padding: 10px 6px; margin-bottom: 14px; border-radius: 14px;
-    background: linear-gradient(#7a4c27, #5a3519); color: #ffe27a; text-align: center; border: 2px solid #a8693a;
-  }
-  .stats small { display: block; font-size: 11px; color: #fff3c4; }
-  .stats b { font-size: 17px; }
-  .btn {
-    cursor: pointer; font: inherit; font-weight: 700; color: #3b2412; padding: 8px 12px; border-radius: 10px;
-    background: linear-gradient(#ffe070, #e0a830); border: 2px solid #9a5f1a; box-shadow: 0 3px 0 #8a5217;
-  }
-  .btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #8a5217; }
-  .btn.active { background: linear-gradient(#e0a830, #c98d1f); }
-  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-  .card { background: rgba(255,255,255,.4); border: 2px solid #b98a4a; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
-  .card h3 { margin: 0 0 6px; font-size: 16px; }
-  .card p { margin: 0 0 8px; font-size: 14px; }
-  .meta { font-size: 12px; opacity: .75; margin-bottom: 8px; }
-  .row { display: flex; gap: 8px; }
-  input { flex: 1; min-width: 0; padding: 8px 10px; border-radius: 8px; border: 2px solid #b98a4a; background: #fff8e6; font: inherit; }
-  .msg { margin-top: 8px; font-size: 13px; font-weight: 700; }
-  .ok { color: #2f6b34; } .bad { color: #a83030; }
-  .locked { opacity: .55; }
-  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
-  .tile {
-    aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer;
-    border-radius: 10px; border: 2px solid #9a5f1a; background: linear-gradient(#a8693a, #6b4423); color: transparent;
-    user-select: none;
-  }
-  .tile.up { background: #fff8e6; color: inherit; }
-  .tile.done { background: #cfe8c4; color: inherit; border-color: #2f6b34; cursor: default; }
-  .row-board { display: flex; justify-content: space-between; padding: 8px 4px; border-bottom: 1px dashed #b98a4a; font-size: 14px; }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;justify-content:center;padding:24px 12px;font-family:'Trebuchet MS','Segoe UI',sans-serif;color:#3b2412;background-color:#1c1840;
+    background-image:linear-gradient(180deg,rgba(0,0,0,.35) 0 6px,transparent 6px),linear-gradient(90deg,rgba(0,0,0,.35) 0 6px,transparent 6px),radial-gradient(circle at 15% 25%,rgba(190,60,200,.28),transparent 40%),radial-gradient(circle at 85% 75%,rgba(40,200,210,.22),transparent 40%);background-size:120px 60px,120px 60px,auto,auto}
+  .frame{width:100%;max-width:720px;height:fit-content;padding:12px;border-radius:30px;background:linear-gradient(#a8693a,#6b4423);border:3px solid #c98f3c;box-shadow:0 14px 30px rgba(0,0,0,.5)}
+  .panel{background:linear-gradient(160deg,#ebdfc0,#ddd0ab);border-radius:20px;padding:20px;min-height:420px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+  h1{margin:0;font-size:24px} h3{margin:0 0 6px} .sub{font-size:12px;opacity:.7}
+  .stats{display:flex;justify-content:space-around;padding:10px 6px;margin-bottom:16px;border-radius:14px;background:linear-gradient(#7a4c27,#5a3519);color:#ffe27a;text-align:center;border:2px solid #a8693a}
+  .stats small{display:block;font-size:11px;color:#fff3c4} .stats b{font-size:17px}
+  .btn{cursor:pointer;font:inherit;font-weight:700;color:#3b2412;padding:8px 12px;border-radius:10px;background:linear-gradient(#ffe070,#e0a830);border:2px solid #9a5f1a;box-shadow:0 3px 0 #8a5217;text-decoration:none;display:inline-block}
+  .btn:active{transform:translateY(2px);box-shadow:0 1px 0 #8a5217}
+  /* 3 games: horizontal row */
+  .games{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .game{cursor:pointer;text-align:center;padding:18px 8px;border-radius:14px;border:2px solid #9a5f1a;background:linear-gradient(#ffe070,#e0a830);box-shadow:0 4px 0 #8a5217;font:inherit;color:#3b2412}
+  .game:active{transform:translateY(2px)}
+  .game .ic{font-size:38px;display:block;margin-bottom:6px} .game b{display:block;font-size:15px} .game small{font-size:11px;opacity:.75}
+  /* levels: horizontal tile grid */
+  .levels{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:8px;margin:12px 0}
+  .lv{cursor:pointer;font:inherit;font-weight:700;font-size:16px;padding:14px 0;border-radius:10px;border:2px solid #9a5f1a;background:linear-gradient(#fff3c4,#f0d78a);color:#3b2412}
+  .lv.done{background:linear-gradient(#d4ecc6,#a9d38f);border-color:#2f6b34}
+  .lv.cur{outline:3px solid #3b2412}
+  .lv:disabled{opacity:.5;cursor:not-allowed;background:#d9cba6}
+  .card{background:rgba(255,255,255,.4);border:2px solid #b98a4a;border-radius:12px;padding:14px;margin-bottom:12px}
+  .card p{margin:0 0 8px;font-size:15px} .meta{font-size:12px;opacity:.75;margin-bottom:8px}
+  .row{display:flex;gap:8px}
+  input{flex:1;min-width:0;padding:9px 10px;border-radius:8px;border:2px solid #b98a4a;background:#fff8e6;font:inherit}
+  .msg{margin-top:8px;font-size:13px;font-weight:700} .ok{color:#2f6b34} .bad{color:#a83030}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;max-width:360px}
+  .tile{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;border-radius:10px;border:2px solid #9a5f1a;background:linear-gradient(#a8693a,#6b4423);color:transparent;user-select:none}
+  .tile.up{background:#fff8e6;color:inherit} .tile.done{background:#cfe8c4;color:inherit;border-color:#2f6b34;cursor:default}
+  /* ---- 3D ---- */
+  .stage{position:relative;height:240px;perspective:900px;margin:6px 0}
+  .g3{position:absolute;left:50%;top:14px;width:170px;margin-left:-85px;height:200px;padding-top:30px;border-radius:18px;border:3px solid #9a5f1a;background:linear-gradient(160deg,#ffe98a,#e0a830);box-shadow:0 10px 0 #8a5217,0 18px 28px rgba(0,0,0,.4);cursor:pointer;font:inherit;color:#3b2412;text-align:center;transition:transform .6s cubic-bezier(.2,.8,.2,1),opacity .6s}
+  .g3 .ic{display:block;font-size:56px;margin-bottom:10px;filter:drop-shadow(0 6px 4px rgba(0,0,0,.3))}
+  .g3 b{display:block;font-size:17px} .g3 small{font-size:12px;opacity:.75}
+  .levels{perspective:700px}
+  .lv{box-shadow:0 6px 0 #8a5217,0 10px 12px rgba(0,0,0,.35);transform:rotateX(20deg);transform-origin:bottom;transition:transform .15s,box-shadow .15s}
+  .lv:hover:not(:disabled){transform:rotateX(0) translateY(-4px)}
+  .lv:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 #8a5217}
+  .grid{perspective:800px}
+  .flip{aspect-ratio:1;cursor:pointer}
+  .flip .in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s}
+  .flip.up .in,.flip.done .in{transform:rotateY(180deg)}
+  .flip .f,.flip .b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:10px;border:2px solid #9a5f1a;backface-visibility:hidden;box-shadow:0 4px 0 #8a5217}
+  .flip .f{background:linear-gradient(#a8693a,#6b4423);color:#ffe27a;font-size:24px;font-weight:700}
+  .flip .b{background:#fff8e6;font-size:28px;transform:rotateY(180deg)}
+  .flip.done .b{background:#cfe8c4;border-color:#2f6b34}
+  /* ---- 3D cube games ---- */
+  .cubewrap{perspective:900px;height:290px;display:flex;align-items:center;justify-content:center;margin:8px 0}
+  .cube{width:210px;height:210px;position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+  .face{position:absolute;left:0;top:0;width:210px;height:210px;border:3px solid #9a5f1a;border-radius:12px;background:linear-gradient(160deg,#a8693a,#6b4423);backface-visibility:hidden;box-shadow:inset 0 0 20px rgba(0,0,0,.35)}
+  .at{font:inherit;font-size:30px;font-weight:700;color:#3b2412;border-radius:10px;border:2px solid #9a5f1a;background:linear-gradient(#ffe070,#e0a830);box-shadow:0 3px 0 #8a5217;cursor:pointer;transition:transform .45s ease-in,opacity .45s}
+  .at.shake{animation:shake .3s}
+  @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  @media (max-width:420px){.game .ic{font-size:30px}.game b{font-size:13px}}
 </style>
 </head>
 <body>
 <div class="frame"><div class="panel">
   <header>
-    <div>
-      <h1>🧩 Puzzle Zone</h1>
-      <div class="sub" id="who">Ready to solve something?</div>
-    </div>
-    <a class="btn back" href="index.html">← Back</a>
+    <div><h1>🧩 Puzzle Zone</h1><div class="sub" id="who">Ready to solve something?</div></div>
+    <a class="btn" href="index.html">← Back</a>
   </header>
-
   <div class="stats">
     <div><small>Levels</small><b id="sSolved">0</b></div>
     <div><small>Points</small><b id="sXp">0</b></div>
     <div><small>Coins</small><b id="sCoins">0</b></div>
-    <div><small>Streak</small><b id="sStreak">0</b></div>
   </div>
-
-  <div class="tabs" id="tabs">
-    <button class="btn" data-t="BRAIN">🧠 Brain</button>
-    <button class="btn" data-t="ESCAPE">🚪 Escape</button>
-    <button class="btn" data-t="MEMORY">🃏 Memory</button>
-    <button class="btn" data-t="DAILY">📅 Daily</button>
-    <button class="btn" data-t="BOARD">🏆 Board</button>
-  </div>
-
   <div id="view"></div>
 </div></div>
 
 <script>
-const API = "/api";   // same server par chal raha hai, isliye relative path
-const KEYS = ["username", "user", "currentUser", "loggedInUser"]; // apne login wali key yahan add karo
-
-function getUser() {
-  for (const st of [localStorage, sessionStorage]) {
-    for (const k of KEYS) {
-      const v = st.getItem(k);
-      if (!v) continue;
-      try {
-        const o = JSON.parse(v);
-        if (typeof o === "string") return o;
-        if (o && o.username) return o.username;
-        continue;
-      } catch (e) { return v; }
-    }
-  }
-  return null;
-}
-
-const user = getUser();
+const API = "/api";
+const KEYS = ["username","user","currentUser","loggedInUser"]; // apne login wali key yahan add karo
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let state = { solved: [] };
-
-async function api(path, opts) {
-  const r = await fetch(API + path, opts);
-  if (!r.ok) throw new Error(r.status);
-  return r.json();
+function getUser(){
+  for (const st of [localStorage, sessionStorage]) for (const k of KEYS) {
+    const v = st.getItem(k); if (!v) continue;
+    try { const o = JSON.parse(v); if (typeof o === "string") return o; if (o && o.username) return o.username; continue; } catch(e){ return v; }
+  } return null;
 }
+const user = getUser();
+let state = {solved:[]}, LIST = [], G = "";
+async function api(p, o){ const r = await fetch(API + p, o); if (!r.ok) throw new Error(r.status); return r.json(); }
 
-async function loadStats() {
+async function loadStats(){
   const s = await api(`/progress/${encodeURIComponent(user)}`);
   state = s;
-  $("sSolved").textContent = s.solved.length;
-  $("sXp").textContent = s.xp;
-  $("sCoins").textContent = s.coins;
-  $("sStreak").textContent = s.streak;
+  $("sSolved").textContent = s.solved.length; $("sXp").textContent = s.xp; $("sCoins").textContent = s.coins;
 }
 
-function setTab(t) {
-  document.querySelectorAll("#tabs .btn").forEach(b => b.classList.toggle("active", b.dataset.t === t));
+/* ---------- Home: 3 games in a row ---------- */
+const GAMES=[["ARROW","🧊","Arrow Cube","Clear the 3D cube"],["MEMORY","🃏","3D Cards","Flip & match"],["BOX","🧠","Brain Box","Spin the cube"]];
+let ci=0;
+function place(){
+  const dx=Math.min(150,($("view").clientWidth||320)*0.42);
+  document.querySelectorAll(".g3").forEach((el,i)=>{
+    let rel=((i-ci)%3+3)%3; if(rel===2) rel=-1;
+    el.style.transform=`translateX(${rel*dx}px) translateZ(${rel?-90:0}px) rotateY(${-rel*35}deg)`;
+    el.style.zIndex=rel?1:2; el.style.opacity=rel?0.75:1;
+  });
+}
+function step(d){ ci=(ci+d+3)%3; place(); }
+function pickGame(i){ if(i===ci) openGame(GAMES[i][0]); else { ci=i; place(); } }
+function home(){
+  clearInterval(window._memTimer);
+  $("view").innerHTML=`<div class="stage">${GAMES.map((g,i)=>`<button class="g3" onclick="pickGame(${i})"><span class="ic">${g[1]}</span><b>${g[2]}</b><small>${g[3]}</small></button>`).join("")}</div>
+    <div style="text-align:center;margin-top:8px"><button class="btn" onclick="step(-1)" aria-label="Previous game">◀</button> <button class="btn" onclick="openGame(GAMES[ci][0])">Play ▶</button> <button class="btn" onclick="step(1)" aria-label="Next game">▶</button></div>`;
+  place(); loadStats().catch(()=>{});
 }
 
-async function show(t) {
-  setTab(t);
+/* ---------- Brain / Escape: level tiles in a row ---------- */
+async function openGame(t){
+  if (t === "MEMORY") return showMemory();
+  if (t === "ARROW") return arrowCube();
+  if (t === "BOX") return brainBox();
   $("view").innerHTML = "Loading...";
-  try {
-    if (t === "BOARD") return showBoard();
-    if (t === "MEMORY") return showMemory();
-    await loadStats();
-    let list;
-    if (t === "DAILY") list = [await api("/puzzles/daily")];
-    else list = await api(`/puzzles?type=${t}`);
-    $("view").innerHTML = list.map((p, i) => {
-      const prev = t === "ESCAPE" && i > 0 ? list[i - 1] : null;
-      const locked = prev && !state.solved.includes(prev.id);
-      const done = state.solved.includes(p.id);
-      return `<div class="card ${locked ? "locked" : ""}">
-        <h3>${locked ? "🔒" : done ? "✅" : t === "ESCAPE" ? "🔑" : "❓"} ${esc(p.title)}</h3>
-        <p>${locked ? "Pichla room solve karke ise unlock karo." : esc(p.question)}</p>
-        <div class="meta">Hint: ${esc(p.hint)} · +${p.xp} XP · +${p.coins} coins</div>
-        ${locked ? "" : `<div class="row"><input id="a${p.id}" placeholder="Your answer">
-        <button class="btn" onclick="solve(${p.id}, '${t}')">Submit</button></div>
-        <div class="msg" id="r${p.id}"></div>`}
-      </div>`;
-    }).join("") || "<div class='card'>Abhi koi puzzle nahi hai.</div>";
-  } catch (e) {
-    $("view").innerHTML = "<div class='card bad'>Server connect nahi ho paya. Spring Boot chal raha hai?</div>";
-  }
+  try { await loadStats(); LIST = await api(`/puzzles?type=${t}`); G = t; draw(null); }
+  catch(e){ $("view").innerHTML = "<div class='card bad'>Server connect nahi ho paya. Spring Boot chal raha hai?</div><button class='btn' onclick='home()'>← Games</button>"; }
 }
-
-async function solve(id, t) {
-  const answer = $("a" + id).value;
-  const out = $("r" + id);
-  try {
-    const res = await api(`/puzzles/${id}/solve`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: user, answer })
-    });
-    if (res.locked) out.innerHTML = '<span class="bad">🔒 Pehle pichla room solve karo</span>';
-    else if (res.already) out.innerHTML = '<span class="ok">Already solved</span>';
-    else if (res.correct) { out.innerHTML = `<span class="ok">Sahi! +${res.xp} XP, +${res.coins} coins</span>`; setTimeout(() => show(t), 1200); }
-    else out.innerHTML = '<span class="bad">Galat answer, phir try karo</span>';
-    loadStats();
-  } catch (e) { out.innerHTML = '<span class="bad">Server error</span>'; }
+const isDone = i => state.solved.includes(LIST[i].id);
+const isLocked = i => G === "ESCAPE" && i > 0 && !isDone(i - 1);
+function draw(sel){
+  if (sel === null) { sel = LIST.findIndex((p, i) => !isDone(i)); if (sel < 0) sel = 0; }
+  const p = LIST[sel];
+  $("view").innerHTML = `
+    <button class="btn" onclick="home()">← Games</button>
+    <div class="levels">${LIST.map((x, i) => `<button class="lv ${isDone(i) ? "done" : ""} ${i === sel ? "cur" : ""}" ${isLocked(i) ? "disabled" : ""} onclick="draw(${i})" aria-label="Level ${i+1}">${isLocked(i) ? "🔒" : isDone(i) ? "✅" : i + 1}</button>`).join("")}</div>
+    ${p ? `<div class="card">
+      <h3>${esc(p.title)} ${isDone(sel) ? "✅" : ""}</h3>
+      <p>${esc(p.question)}</p>
+      <div class="meta">Hint: ${esc(p.hint)} · +${p.xp} XP · +${p.coins} coins</div>
+      <div class="row"><input id="ans" placeholder="Your answer" autocomplete="off" onkeydown="if(event.key==='Enter')solve(${p.id},${sel})">
+      <button class="btn" onclick="solve(${p.id},${sel})">Submit</button></div>
+      <div class="msg" id="msg"></div></div>` : "<div class='card'>Abhi koi puzzle nahi hai.</div>"}`;
 }
-
-async function showBoard() {
-  const rows = await api("/leaderboard");
-  $("view").innerHTML = "<div class='card'>" + (rows.map((r, i) =>
-    `<div class="row-board"><span>${["🥇","🥈","🥉"][i] || i + 1 + "."} ${esc(r.username)}</span><span>${r.xp} XP · ${r.solved} levels</span></div>`
-  ).join("") || "Abhi koi player nahi.") + "</div>";
+async function solve(id, idx){
+  const answer = $("ans").value; if (!answer.trim()) return;
+  try {
+    const res = await api(`/puzzles/${id}/solve`, {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({username:user, answer})});
+    const m = $("msg");
+    if (res.locked) m.innerHTML = '<span class="bad">🔒 Pehle pichla room solve karo</span>';
+    else if (res.already) m.innerHTML = '<span class="ok">Already solved</span>';
+    else if (res.correct) { m.innerHTML = `<span class="ok">Sahi! +${res.xp} XP, +${res.coins} coins</span>`; await loadStats(); setTimeout(() => (G === "BOX" ? drawBox : draw)(Math.min(idx + 1, LIST.length - 1)), 900); }
+    else m.innerHTML = '<span class="bad">Galat answer, phir try karo</span>';
+  } catch(e){ $("msg").innerHTML = '<span class="bad">Server error</span>'; }
 }
 
 /* ---------- Memory Match ---------- */
 let mem;
-function showMemory() {
+function showMemory(){
   const icons = ["🏆","⚽","🎵","💰","🛕","🧩","🔑","⭐"];
   const deck = [...icons, ...icons].sort(() => Math.random() - 0.5);
-  mem = { deck, open: [], matched: 0, moves: 0, seconds: 0, timer: null, lock: false };
-  $("view").innerHTML = `<div class="card">
-    <h3>🃏 Memory Match</h3>
-    <div class="meta">Moves: <b id="mMoves">0</b> · Time: <b id="mTime">0</b>s · Kam moves = zyada XP</div>
-    <div class="grid">${deck.map((c, i) => `<div class="tile" id="t${i}" onclick="flip(${i})">${c}</div>`).join("")}</div>
-    <button class="btn" onclick="showMemory()">New game</button>
-    <div class="msg" id="mMsg"></div></div>`;
   clearInterval(window._memTimer);
+  mem = {deck, open:[], matched:0, moves:0, seconds:0, timer:null, lock:false};
+  $("view").innerHTML = `<button class="btn" onclick="home()">← Games</button>
+    <div class="card" style="margin-top:12px"><h3>🃏 Memory Match</h3>
+    <div class="meta">Moves: <b id="mMoves">0</b> · Time: <b id="mTime">0</b>s · Kam moves = zyada XP</div>
+    <div class="grid">${deck.map((c, i) => `<div class="flip" id="t${i}" onclick="flip(${i})"><div class="in"><div class="f">?</div><div class="b">${c}</div></div></div>`).join("")}</div>
+    <button class="btn" onclick="showMemory()">New game</button><div class="msg" id="mMsg"></div></div>`;
 }
-
-function flip(i) {
+function flip(i){
   const el = $("t" + i);
   if (mem.lock || el.classList.contains("up") || el.classList.contains("done")) return;
   if (!mem.timer) { mem.timer = setInterval(() => { mem.seconds++; $("mTime").textContent = mem.seconds; }, 1000); window._memTimer = mem.timer; }
@@ -207,35 +176,116 @@ function flip(i) {
   mem.moves++; $("mMoves").textContent = mem.moves;
   const [a, b] = mem.open; mem.open = [];
   if (mem.deck[a] === mem.deck[b]) {
-    ["t" + a, "t" + b].forEach(id => { $(id).classList.remove("up"); $(id).classList.add("done"); });
+    ["t"+a, "t"+b].forEach(id => { $(id).classList.remove("up"); $(id).classList.add("done"); });
     if (++mem.matched === 8) finishMemory();
   } else {
     mem.lock = true;
-    setTimeout(() => { $("t" + a).classList.remove("up"); $("t" + b).classList.remove("up"); mem.lock = false; }, 700);
+    setTimeout(() => { $("t"+a).classList.remove("up"); $("t"+b).classList.remove("up"); mem.lock = false; }, 700);
+  }
+}
+async function finishMemory(){
+  clearInterval(mem.timer);
+  try {
+    const r = await api("/memory/complete", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({username:user, moves:mem.moves, seconds:mem.seconds})});
+    $("mMsg").innerHTML = `<span class="ok">Done! ${mem.moves} moves, ${mem.seconds}s → +${r.xp} XP, +${r.coins} coins</span>`;
+    loadStats();
+  } catch(e){ $("mMsg").innerHTML = '<span class="bad">Score save nahi hua</span>'; }
+}
+
+/* ---------- 3D cube (Arrow Cube + Brain Box) ---------- */
+const FACE=["rotateY(0deg)","rotateY(-90deg)","rotateY(-180deg)","rotateY(90deg)","rotateX(-90deg)","rotateX(90deg)"];
+const FT=["rotateY(0deg)","rotateY(90deg)","rotateY(180deg)","rotateY(-90deg)","rotateX(90deg)","rotateX(-90deg)"];
+const TILT="rotateX(-16deg) rotateY(-20deg) ";
+let prevSel=0;
+function cubeHTML(inner){
+  return `<div class="cubewrap"><div class="cube" id="cube" style="transform:${TILT}${FACE[prevSel]}">${inner.map((h,i)=>`<div class="face" style="transform:${FT[i]} translateZ(105px)">${h}</div>`).join("")}</div></div>`;
+}
+function turn(sel){
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ const c=$("cube"); if(c) c.style.transform=TILT+FACE[sel]; prevSel=sel; }));
+}
+
+/* Arrow Cube: har face par 3x3 arrows. Arrow ke raaste mein koi tile na ho to wo udd jaati hai. */
+const DIRS=[[-1,0,"↑"],[1,0,"↓"],[0,-1,"←"],[0,1,"→"]];
+let A;
+function free(f,i){
+  let r=(i/3)|0, c=i%3; const [dr,dc]=DIRS[f[i]];
+  r+=dr; c+=dc;
+  while(r>=0&&r<3&&c>=0&&c<3){ if(f[r*3+c]!==null) return false; r+=dr; c+=dc; }
+  return true;
+}
+function solvable(f0){
+  const f=[...f0]; let ch=true;
+  while(ch){ ch=false; for(let i=0;i<9;i++) if(f[i]!==null&&free(f,i)){ f[i]=null; ch=true; } }
+  return f.every(x=>x===null);
+}
+function genFace(){
+  for(;;){ const f=Array.from({length:9},()=>Math.floor(Math.random()*4)); if(solvable(f)) return f; }   // hamesha solvable
+}
+function arrowFace(f,fi){
+  return `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px;height:100%">${f.map((d,i)=>
+    d===null?"<span></span>":`<button class="at" id="a${fi}_${i}" onclick="tapArrow(${fi},${i})" aria-label="Arrow ${DIRS[d][2]}">${DIRS[d][2]}</button>`).join("")}</div>`;
+}
+function arrowCube(){
+  A={faces:Array.from({length:6},genFace), bad:0, t0:Date.now(), sel:0, done:false};
+  prevSel=0; drawArrow();
+}
+function drawArrow(){
+  const left=A.faces.flat().filter(x=>x!==null).length;
+  $("view").innerHTML=`<button class="btn" onclick="home()">← Games</button>
+    <div class="meta" style="margin-top:10px">Arrow ke direction mein raasta khali ho to tile udd jayegi. Cube ke 6 faces clear karo. Left: <b id="aLeft">${left}</b> · Galat taps: <b id="aBad">${A.bad}</b></div>
+    ${cubeHTML(A.faces.map(arrowFace))}
+    <div class="levels" style="grid-template-columns:repeat(6,1fr)">${A.faces.map((f,i)=>`<button class="lv ${i===A.sel?"cur":""}" onclick="A.sel=${i};markSel();turn(${i})" aria-label="Face ${i+1}">${i+1}</button>`).join("")}</div>
+    <div class="msg" id="aMsg"></div>`;
+  turn(A.sel);
+}
+function markSel(){ document.querySelectorAll(".levels .lv").forEach((b,i)=>b.classList.toggle("cur",i===A.sel)); }
+async function tapArrow(fi,i){
+  if(A.done) return;
+  const f=A.faces[fi]; if(f[i]===null) return;
+  const el=$(`a${fi}_${i}`);
+  if(!free(f,i)){ A.bad++; $("aBad").textContent=A.bad; el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); return; }
+  const d=DIRS[f[i]]; f[i]=null;
+  el.style.transform=`translate(${d[1]*170}px,${d[0]*170}px) translateZ(60px)`; el.style.opacity=0; el.disabled=true;
+  const left=A.faces.flat().filter(x=>x!==null).length; $("aLeft").textContent=left;
+  if(f.every(x=>x===null)){ const b=document.querySelectorAll(".levels .lv")[fi]; b.classList.add("done"); b.textContent="✅"; }
+  if(left===0){
+    A.done=true; const sec=Math.round((Date.now()-A.t0)/1000);
+    try {
+      const r=await api("/memory/complete",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:user,moves:A.bad,seconds:sec})});
+      $("aMsg").innerHTML=`<span class="ok">🎉 Cube clear! ${sec}s, ${A.bad} galat taps → +${r.xp} XP, +${r.coins} coins</span> <button class="btn" onclick="arrowCube()">Play Again</button>`;
+      loadStats();
+    } catch(e){ $("aMsg").innerHTML='<span class="bad">Score save nahi hua</span> <button class="btn" onclick="arrowCube()">Play Again</button>'; }
   }
 }
 
-async function finishMemory() {
-  clearInterval(mem.timer);
+/* Brain Box: cube ke 6 faces par 6 Brain puzzles */
+async function brainBox(){
+  $("view").innerHTML="Loading...";
   try {
-    const r = await api("/memory/complete", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: user, moves: mem.moves, seconds: mem.seconds })
-    });
-    $("mMsg").innerHTML = `<span class="ok">Done! ${mem.moves} moves, ${mem.seconds}s → +${r.xp} XP, +${r.coins} coins</span>`;
-    loadStats();
-  } catch (e) { $("mMsg").innerHTML = '<span class="bad">Score save nahi hua</span>'; }
+    await loadStats(); G="BOX";
+    const all=await api("/puzzles?type=BRAIN");
+    const open=all.filter(p=>!state.solved.includes(p.id)), done=all.filter(p=>state.solved.includes(p.id));
+    LIST=[...open,...done].slice(0,6); prevSel=0; drawBox(0);
+  } catch(e){ $("view").innerHTML="<div class='card bad'>Server connect nahi ho paya. Spring Boot chal raha hai?</div><button class='btn' onclick='home()'>← Games</button>"; }
+}
+function drawBox(sel){
+  const p=LIST[sel];
+  $("view").innerHTML=`<button class="btn" onclick="home()">← Games</button>
+    ${cubeHTML(LIST.map((x,i)=>`<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ffe27a;text-align:center;padding:10px"><div style="font-size:46px">${isDone(i)?"✅":"🧠"}</div><b>Box ${i+1}</b><small style="color:#fff3c4">${esc(x.title)}</small></div>`))}
+    <div class="levels" style="grid-template-columns:repeat(6,1fr)">${LIST.map((x,i)=>`<button class="lv ${isDone(i)?"done":""} ${i===sel?"cur":""}" onclick="drawBox(${i})" aria-label="Box ${i+1}">${isDone(i)?"✅":i+1}</button>`).join("")}</div>
+    <div class="card">
+      <h3>${esc(p.title)} ${isDone(sel)?"✅":""}</h3>
+      <p>${esc(p.question)}</p>
+      <div class="meta">Hint: ${esc(p.hint)} · +${p.xp} XP · +${p.coins} coins</div>
+      <div class="row"><input id="ans" placeholder="Your answer" autocomplete="off" onkeydown="if(event.key==='Enter')solve(${p.id},${sel})">
+      <button class="btn" onclick="solve(${p.id},${sel})">Submit</button></div>
+      <div class="msg" id="msg"></div></div>`;
+  turn(sel);
 }
 
 /* ---------- start ---------- */
-document.querySelectorAll("#tabs .btn").forEach(b => b.onclick = () => show(b.dataset.t));
-if (!user) {
-  $("view").innerHTML = "<div class='card bad'>Pehle login karo, phir puzzles khelo.</div>";
-} else {
-  $("who").textContent = "Hi, " + user;
-  loadStats().catch(() => {});
-  show("BRAIN");
-}
+if (!user) $("view").innerHTML = "<div class='card bad'>Pehle login karo, phir puzzles khelo.</div>";
+else { $("who").textContent = "Hi, " + user; home(); }
 </script>
 </body>
 </html>
