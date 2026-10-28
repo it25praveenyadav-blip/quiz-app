@@ -51,14 +51,27 @@
   .flip .f,.flip .b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:10px;border:2px solid #9a5f1a;backface-visibility:hidden;box-shadow:0 4px 0 #8a5217}
   .flip .f{background:linear-gradient(#a8693a,#6b4423);color:#ffe27a;font-size:24px;font-weight:700}
   .flip .b{background:#fff8e6;font-size:28px;transform:rotateY(180deg)}
+  .flip .b img{width:100%;height:100%;object-fit:cover;border-radius:8px}
   .flip.done .b{background:#cfe8c4;border-color:#2f6b34}
   /* ---- 3D cube games ---- */
   .cubewrap{perspective:900px;height:290px;display:flex;align-items:center;justify-content:center;margin:8px 0}
-  .cube{width:210px;height:210px;position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
-  .face{position:absolute;left:0;top:0;width:210px;height:210px;border:3px solid #9a5f1a;border-radius:12px;background:linear-gradient(160deg,#a8693a,#6b4423);backface-visibility:hidden;box-shadow:inset 0 0 20px rgba(0,0,0,.35)}
+  .cube{width:var(--s,210px);height:var(--s,210px);position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+  .face{position:absolute;left:0;top:0;width:var(--s,210px);height:var(--s,210px);border:3px solid #9a5f1a;border-radius:12px;background:linear-gradient(160deg,#a8693a,#6b4423);backface-visibility:hidden;box-shadow:inset 0 0 20px rgba(0,0,0,.35)}
   .at{font:inherit;font-size:30px;font-weight:700;color:#3b2412;border-radius:10px;border:2px solid #9a5f1a;background:linear-gradient(#ffe070,#e0a830);box-shadow:0 3px 0 #8a5217;cursor:pointer;transition:transform .45s ease-in,opacity .45s}
   .at.shake{animation:shake .3s}
+  .lv.done:disabled{background:linear-gradient(#d4ecc6,#a9d38f);opacity:.9}
   @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  /* ---- Block Puzzle (wood) ---- */
+  .bpBar{display:flex;justify-content:space-around;margin:10px 0 0;padding:8px;border-radius:12px;background:linear-gradient(#7a4c27,#5a3519);color:#ffe27a;border:2px solid #a8693a;font-size:15px}
+  .bpGrid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;padding:6px;background:#4a2a14;border-radius:12px;border:3px solid #c98f3c;max-width:380px;margin:10px auto;touch-action:none}
+  .bc{aspect-ratio:1;background:#3a2010;border-radius:3px}
+  .bc.on{background:linear-gradient(#f5b87a,#e0a060);box-shadow:inset 0 -2px 0 #b07038}
+  .bc.ok{background:rgba(255,226,122,.6)} .bc.bad{background:rgba(200,60,60,.55)}
+  .tray{display:flex;justify-content:space-around;align-items:center;min-height:110px;max-width:380px;margin:0 auto;padding:10px;border-radius:12px;background:linear-gradient(#7a4c27,#5a3519);border:2px solid #a8693a}
+  .slot{flex:1;display:flex;justify-content:center;align-items:center;min-height:90px}
+  .pc{display:grid;gap:2px;touch-action:none;cursor:grab;user-select:none}
+  .pc i{display:block;width:20px;height:20px;border-radius:3px;background:linear-gradient(#f5b87a,#e0a060);box-shadow:inset 0 -2px 0 #b07038}
+  .pc i.e{background:transparent;box-shadow:none}
   @media (max-width:420px){.game .ic{font-size:30px}.game b{font-size:13px}}
 </style>
 </head>
@@ -98,17 +111,18 @@ async function loadStats(){
 }
 
 /* ---------- Home: 3 games in a row ---------- */
-const GAMES=[["ARROW","🧊","Arrow Cube","Clear the 3D cube"],["MEMORY","🃏","3D Cards","Flip & match"],["BOX","🧠","Brain Box","Spin the cube"]];
+const GAMES=[["ARROW","🧊","Arrow Cube","Clear the 3D cube"],["MEMORY","🃏","3D Cards","Flip & match"],["BOX","🧠","Brain Box","Spin the cube"],["BLOCK","🧱","Block Puzzle","Fit the wood blocks"]];
 let ci=0;
 function place(){
-  const dx=Math.min(150,($("view").clientWidth||320)*0.42);
+  const n=GAMES.length, dx=Math.min(150,($("view").clientWidth||320)*0.42);
   document.querySelectorAll(".g3").forEach((el,i)=>{
-    let rel=((i-ci)%3+3)%3; if(rel===2) rel=-1;
+    let rel=((i-ci)%n+n)%n; if(rel>n/2) rel-=n;
+    const vis=Math.abs(rel)<=1;
     el.style.transform=`translateX(${rel*dx}px) translateZ(${rel?-90:0}px) rotateY(${-rel*35}deg)`;
-    el.style.zIndex=rel?1:2; el.style.opacity=rel?0.75:1;
+    el.style.zIndex=rel?1:2; el.style.opacity=vis?(rel?0.75:1):0; el.style.pointerEvents=vis?"auto":"none";
   });
 }
-function step(d){ ci=(ci+d+3)%3; place(); }
+function step(d){ const n=GAMES.length; ci=(ci+d+n)%n; place(); }
 function pickGame(i){ if(i===ci) openGame(GAMES[i][0]); else { ci=i; place(); } }
 function home(){
   clearInterval(window._memTimer);
@@ -119,9 +133,10 @@ function home(){
 
 /* ---------- Brain / Escape: level tiles in a row ---------- */
 async function openGame(t){
-  if (t === "MEMORY") return showMemory();
-  if (t === "ARROW") return arrowCube();
-  if (t === "BOX") return brainBox();
+  if (t === "MEMORY") return memMenu();
+  if (t === "ARROW") return arrowMenu();
+  if (t === "BOX") { BOXH = 3; return brainBox(); }
+  if (t === "BLOCK") return blockGame();
   $("view").innerHTML = "Loading...";
   try { await loadStats(); LIST = await api(`/puzzles?type=${t}`); G = t; draw(null); }
   catch(e){ $("view").innerHTML = "<div class='card bad'>Server connect nahi ho paya. Spring Boot chal raha hai?</div><button class='btn' onclick='home()'>← Games</button>"; }
@@ -150,46 +165,87 @@ async function solve(id, idx){
     if (res.locked) m.innerHTML = '<span class="bad">🔒 Pehle pichla room solve karo</span>';
     else if (res.already) m.innerHTML = '<span class="ok">Already solved</span>';
     else if (res.correct) { m.innerHTML = `<span class="ok">Sahi! +${res.xp} XP, +${res.coins} coins</span>`; await loadStats(); setTimeout(() => (G === "BOX" ? drawBox : draw)(Math.min(idx + 1, LIST.length - 1)), 900); }
-    else m.innerHTML = '<span class="bad">Galat answer, phir try karo</span>';
+    else { m.innerHTML = '<span class="bad">Galat answer</span>'; if (G === "BOX") { BOXH--; if (BOXH <= 0) return boxOver(); $("boxHearts").textContent = boxHearts(); } }
   } catch(e){ $("msg").innerHTML = '<span class="bad">Server error</span>'; }
 }
 
-/* ---------- Memory Match ---------- */
+/* ---------- 3D Cards (Memory) with levels ---------- */
+const MLEVELS=Array.from({length:30},(_,i)=>{
+  const pairs=Math.min(15,5+Math.floor(i/2.8));
+  const cols=pairs<=6?4:pairs<=10?5:6;
+  const limit=Math.round(pairs*(8-3.5*i/29));
+  const peek=Math.round(600-300*i/29);
+  const name=i<4?"Hard":i<10?"Very Hard":i<18?"Expert":i<26?"Insane":"Impossible";
+  return {name,pairs,cols,limit,peek};
+});
+const MICONS=["🏆","⚽","🎵","💰","🛕","🧩","🔑","⭐","🎯","🎲","🚀","💎","🔥","🌈","🎸"];
 let mem;
-function showMemory(){
-  const icons = ["🏆","⚽","🎵","💰","🛕","🧩","🔑","⭐"];
-  const deck = [...icons, ...icons].sort(() => Math.random() - 0.5);
+const mKey=()=>"mem_cleared_"+user;
+function mCleared(){ try{ return JSON.parse(localStorage.getItem(mKey())||"[]"); }catch(e){ return []; } }
+function memMenu(){
   clearInterval(window._memTimer);
-  mem = {deck, open:[], matched:0, moves:0, seconds:0, timer:null, lock:false};
-  $("view").innerHTML = `<button class="btn" onclick="home()">← Games</button>
-    <div class="card" style="margin-top:12px"><h3>🃏 Memory Match</h3>
-    <div class="meta">Moves: <b id="mMoves">0</b> · Time: <b id="mTime">0</b>s · Kam moves = zyada XP</div>
-    <div class="grid">${deck.map((c, i) => `<div class="flip" id="t${i}" onclick="flip(${i})"><div class="in"><div class="f">?</div><div class="b">${c}</div></div></div>`).join("")}</div>
-    <button class="btn" onclick="showMemory()">New game</button><div class="msg" id="mMsg"></div></div>`;
+  const cl=mCleared();
+  $("view").innerHTML=`<button class="btn" onclick="home()">← Games</button> <span class="meta">${cl.length}/30 levels clear</span>
+    <div class="meta" style="margin-top:10px;font-size:13px">Sirf 3 ❤️. Jo card pehle dekha ho usse galat match karne par ❤️ jata hai (naye cards ka mismatch free hai). Har level timed hai aur cards jaldi palat jaate hain. Clear hua level dobara nahi khelta.<br>L1-4 Hard · L5-10 Very Hard · L11-18 Expert · L19-26 Insane · L27-30 Impossible (30 cards)</div>
+    <div class="levels" style="grid-template-columns:repeat(auto-fill,minmax(58px,1fr))">${MLEVELS.map((L,i)=>{
+      const done=cl.includes(i), lock=i>0&&!cl.includes(i-1);
+      return `<button class="lv ${done?"done":""}" ${done||lock?"disabled":""} title="${L.name} · ${L.pairs*2} cards" onclick="showMemory(${i})" aria-label="Level ${i+1} ${L.name}">${done?"✅":lock?"🔒":i+1}</button>`;
+    }).join("")}</div>`;
+}
+const mHearts=()=>"❤️".repeat(mem.hearts)+"🖤".repeat(3-mem.hearts);
+function showMemory(lv){
+  const L=MLEVELS[lv];
+  clearInterval(window._memTimer);
+  const ids=[...Array(L.pairs).keys()];
+  const deck=[...ids,...ids].sort(()=>Math.random()-0.5);
+  mem={lv,deck,open:[],matched:0,moves:0,seconds:0,timer:null,lock:false,over:false,pairs:L.pairs,hearts:3,seen:new Set()};
+  $("view").innerHTML=`<button class="btn" onclick="memMenu()">← Levels</button>
+    <div class="card" style="margin-top:12px"><h3>🃏 Level ${lv+1} · ${L.name}</h3>
+    <div class="meta"><span id="mHearts">${mHearts()}</span> · Moves: <b id="mMoves">0</b> · Time: <b id="mTime">${L.limit}</b>s left · ${L.pairs} pairs</div>
+    <div class="grid" style="grid-template-columns:repeat(${L.cols},1fr);max-width:${L.cols*78}px">${deck.map((c,i)=>`<div class="flip" id="t${i}" onclick="flip(${i})"><div class="in"><div class="f">?</div><div class="b"><img src="img/cards/${c+1}.png" alt="Card ${c+1}" onerror="this.outerHTML='${MICONS[c]}'"></div></div></div>`).join("")}</div>
+    <div class="msg" id="mMsg"></div></div>`;
 }
 function flip(i){
-  const el = $("t" + i);
-  if (mem.lock || el.classList.contains("up") || el.classList.contains("done")) return;
-  if (!mem.timer) { mem.timer = setInterval(() => { mem.seconds++; $("mTime").textContent = mem.seconds; }, 1000); window._memTimer = mem.timer; }
-  el.classList.add("up"); mem.open.push(i);
-  if (mem.open.length < 2) return;
-  mem.moves++; $("mMoves").textContent = mem.moves;
-  const [a, b] = mem.open; mem.open = [];
-  if (mem.deck[a] === mem.deck[b]) {
-    ["t"+a, "t"+b].forEach(id => { $(id).classList.remove("up"); $(id).classList.add("done"); });
-    if (++mem.matched === 8) finishMemory();
-  } else {
-    mem.lock = true;
-    setTimeout(() => { $("t"+a).classList.remove("up"); $("t"+b).classList.remove("up"); mem.lock = false; }, 700);
+  if(mem.over||mem.lock) return;
+  const el=$("t"+i); if(el.classList.contains("up")||el.classList.contains("done")) return;
+  const L=MLEVELS[mem.lv];
+  if(!mem.timer){
+    mem.timer=setInterval(()=>{
+      if(mem.over) return;
+      mem.seconds++;
+      const left=L.limit-mem.seconds; $("mTime").textContent=Math.max(0,left);
+      if(left<=0) endMem(false,"⏰ Time khatam!");
+    },1000);
+    window._memTimer=mem.timer;
   }
+  el.classList.add("up"); mem.open.push(i);
+  if(mem.open.length<2) return;
+  mem.moves++; $("mMoves").textContent=mem.moves;
+  const [a,b]=mem.open; mem.open=[];
+  if(mem.deck[a]===mem.deck[b]){
+    ["t"+a,"t"+b].forEach(id=>{ $(id).classList.remove("up"); $(id).classList.add("done"); });
+    mem.matched++;
+    if(mem.matched===mem.pairs) return endMem(true);
+  } else {
+    const careless=mem.seen.has(a)||mem.seen.has(b);       // pehle dekha hua card galat match = ❤️ gaya
+    mem.lock=true;
+    setTimeout(()=>{ $("t"+a).classList.remove("up"); $("t"+b).classList.remove("up"); mem.lock=false; },L.peek);
+    if(careless){ mem.hearts--; $("mHearts").textContent=mHearts(); if(mem.hearts<=0) endMem(false,"💔 Saare ❤️ khatam!"); }
+  }
+  mem.seen.add(a); mem.seen.add(b);
 }
-async function finishMemory(){
-  clearInterval(mem.timer);
+async function endMem(win,msg){
+  if(mem.over) return;
+  mem.over=true; clearInterval(mem.timer); clearInterval(window._memTimer);
+  if(!win){ $("mMsg").innerHTML=`<span class="bad">${msg} Game Over.</span><br><br><button class="btn" onclick="memMenu()">← Levels</button>`; return; }
+  const cl=mCleared(); if(!cl.includes(mem.lv)){ cl.push(mem.lv); try{ localStorage.setItem(mKey(),JSON.stringify(cl)); }catch(e){} }
+  const next=mem.lv+1<MLEVELS.length?`<button class="btn" onclick="showMemory(${mem.lv+1})">Next level →</button> `:"";
+  let txt;
   try {
-    const r = await api("/memory/complete", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({username:user, moves:mem.moves, seconds:mem.seconds})});
-    $("mMsg").innerHTML = `<span class="ok">Done! ${mem.moves} moves, ${mem.seconds}s → +${r.xp} XP, +${r.coins} coins</span>`;
-    loadStats();
-  } catch(e){ $("mMsg").innerHTML = '<span class="bad">Score save nahi hua</span>'; }
+    const r=await api("/memory/complete",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:user,moves:Math.max(0,mem.moves-mem.pairs),seconds:mem.seconds})});
+    txt=`<span class="ok">🎉 Level clear! ${mem.moves} moves, ${mem.seconds}s → +${r.xp} XP, +${r.coins} coins</span>`; loadStats();
+  } catch(e){ txt='<span class="bad">Level clear, par score save nahi hua</span>'; }
+  $("mMsg").innerHTML=txt+`<br><br>${next}<button class="btn" onclick="memMenu()">← Levels</button>`;
 }
 
 /* ---------- 3D cube (Arrow Cube + Brain Box) ---------- */
@@ -197,90 +253,248 @@ const FACE=["rotateY(0deg)","rotateY(-90deg)","rotateY(-180deg)","rotateY(90deg)
 const FT=["rotateY(0deg)","rotateY(90deg)","rotateY(180deg)","rotateY(-90deg)","rotateX(90deg)","rotateX(-90deg)"];
 const TILT="rotateX(-16deg) rotateY(-20deg) ";
 let prevSel=0;
-function cubeHTML(inner){
-  return `<div class="cubewrap"><div class="cube" id="cube" style="transform:${TILT}${FACE[prevSel]}">${inner.map((h,i)=>`<div class="face" style="transform:${FT[i]} translateZ(105px)">${h}</div>`).join("")}</div></div>`;
+function cubeHTML(inner,size=210){
+  return `<div class="cubewrap" style="--s:${size}px;height:${size+80}px"><div class="cube" id="cube" style="transform:${TILT}${FACE[prevSel]}">${inner.map((h,i)=>`<div class="face" style="transform:${FT[i]} translateZ(${size/2}px)">${h}</div>`).join("")}</div></div>`;
 }
 function turn(sel){
   requestAnimationFrame(()=>requestAnimationFrame(()=>{ const c=$("cube"); if(c) c.style.transform=TILT+FACE[sel]; prevSel=sel; }));
 }
 
-/* Arrow Cube: har face par 3x3 arrows. Arrow ke raaste mein koi tile na ho to wo udd jaati hai. */
+/* Arrow Cube: 5 levels, 3 hearts, har baar naya cube */
 const DIRS=[[-1,0,"↑"],[1,0,"↓"],[0,-1,"←"],[0,1,"→"]];
+const LEVELS=Array.from({length:30},(_,i)=>{
+  const n=i<4?4:i<10?5:i<18?6:7;
+  const hard=Math.min(1,0.6+i*0.015);
+  const name=i<4?"Hard":i<10?"Very Hard":i<18?"Expert":i<26?"Insane":"Impossible";
+  const tiles=Math.round(n*n*6*0.82);
+  const limit=Math.round(tiles*(1.6-0.6*i/29));
+  return {name,n,hard,limit};
+});
 let A;
-function free(f,i){
-  let r=(i/3)|0, c=i%3; const [dr,dc]=DIRS[f[i]];
+const clearedKey=()=>"arrow_cleared_"+user;
+function getCleared(){ try{ return JSON.parse(localStorage.getItem(clearedKey())||"[]"); }catch(e){ return []; } }
+function setCleared(a){ try{ localStorage.setItem(clearedKey(),JSON.stringify(a)); }catch(e){} }
+const heartsStr=()=>"❤️".repeat(A.hearts)+"🖤".repeat(3-A.hearts);
+
+function free(f,i,n){
+  let r=(i/n)|0, c=i%n; const [dr,dc]=DIRS[f[i]];
   r+=dr; c+=dc;
-  while(r>=0&&r<3&&c>=0&&c<3){ if(f[r*3+c]!==null) return false; r+=dr; c+=dc; }
+  while(r>=0&&r<n&&c>=0&&c<n){ if(f[r*n+c]!==null) return false; r+=dr; c+=dc; }
   return true;
 }
-function solvable(f0){
-  const f=[...f0]; let ch=true;
-  while(ch){ ch=false; for(let i=0;i<9;i++) if(f[i]!==null&&free(f,i)){ f[i]=null; ch=true; } }
-  return f.every(x=>x===null);
+// Tiles ek-ek karke aise rakhe jaate hain ki har tile ka raasta pehle se rakhi tiles se bandh na ho => cube hamesha solvable
+function genFace(n,hard){
+  const f=Array(n*n).fill(null), order=[...Array(n*n).keys()].sort(()=>Math.random()-.5);
+  for(const i of order){
+    const r=(i/n)|0, c=i%n, opts=[];
+    DIRS.forEach(([dr,dc],d)=>{
+      let rr=r+dr, cc=c+dc, len=0, ok=true;
+      while(rr>=0&&rr<n&&cc>=0&&cc<n){ if(f[rr*n+cc]!==null){ ok=false; break; } len++; rr+=dr; cc+=dc; }
+      if(ok) opts.push([d,len]);
+    });
+    if(!opts.length) continue;
+    opts.sort((a,b)=>b[1]-a[1]);                       // lamba raasta = zyada dependency = zyada hard
+    f[i]=(Math.random()<hard?opts[0]:opts[Math.floor(Math.random()*opts.length)])[0];
+  }
+  return f;
 }
-function genFace(){
-  for(;;){ const f=Array.from({length:9},()=>Math.floor(Math.random()*4)); if(solvable(f)) return f; }   // hamesha solvable
+
+function arrowMenu(){
+  clearInterval(window._memTimer);
+  const cl=getCleared();
+  $("view").innerHTML=`<button class="btn" onclick="home()">← Games</button> <span class="meta">${cl.length}/30 levels clear</span>
+    <div class="meta" style="margin-top:10px;font-size:13px">Sirf 3 ❤️. Galat tap par ek ❤️ jata hai, time khatam hone par bhi Game Over. Har level timed hai. Clear hua level dobara nahi khelta.<br>L1-4 Hard (4x4) · L5-10 Very Hard (5x5) · L11-18 Expert (6x6) · L19-26 Insane (7x7) · L27-30 Impossible (7x7, sabse kam time)</div>
+    <div class="levels" style="grid-template-columns:repeat(auto-fill,minmax(58px,1fr))">${LEVELS.map((L,i)=>{
+      const done=cl.includes(i), lock=i>0&&!cl.includes(i-1);
+      return `<button class="lv ${done?"done":""}" ${done||lock?"disabled":""} title="${L.name}" onclick="arrowCube(${i})" aria-label="Level ${i+1} ${L.name}">${done?"✅":lock?"🔒":i+1}</button>`;
+    }).join("")}</div>`;
+}
+function arrowCube(lv){
+  const L=LEVELS[lv];
+  clearInterval(window._memTimer);
+  A={lv, n:L.n, size:(L.n<=5?210:L.n===6?250:280), faces:Array.from({length:6},()=>genFace(L.n,L.hard)), hearts:3, t0:Date.now(), sel:0, over:false, left:L.limit};
+  prevSel=0; drawArrow();
+  if(L.limit){
+    window._memTimer=setInterval(()=>{
+      if(A.over) return;
+      A.left--; const t=$("aTime"); if(t) t.textContent=A.left;
+      if(A.left<=0) endArrow(false,"⏰ Time khatam!");
+    },1000);
+  }
 }
 function arrowFace(f,fi){
-  return `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px;height:100%">${f.map((d,i)=>
-    d===null?"<span></span>":`<button class="at" id="a${fi}_${i}" onclick="tapArrow(${fi},${i})" aria-label="Arrow ${DIRS[d][2]}">${DIRS[d][2]}</button>`).join("")}</div>`;
-}
-function arrowCube(){
-  A={faces:Array.from({length:6},genFace), bad:0, t0:Date.now(), sel:0, done:false};
-  prevSel=0; drawArrow();
+  const n=A.n, fs=[0,0,0,0,28,22,20,18][n];
+  return `<div style="display:grid;grid-template-columns:repeat(${n},1fr);grid-auto-rows:1fr;gap:${n>5?3:4}px;padding:8px;height:100%">${f.map((d,i)=>
+    d===null?"<span></span>":`<button class="at" style="font-size:${fs}px;padding:0" id="a${fi}_${i}" onclick="tapArrow(${fi},${i})" aria-label="Arrow ${DIRS[d][2]}">${DIRS[d][2]}</button>`).join("")}</div>`;
 }
 function drawArrow(){
-  const left=A.faces.flat().filter(x=>x!==null).length;
-  $("view").innerHTML=`<button class="btn" onclick="home()">← Games</button>
-    <div class="meta" style="margin-top:10px">Arrow ke direction mein raasta khali ho to tile udd jayegi. Cube ke 6 faces clear karo. Left: <b id="aLeft">${left}</b> · Galat taps: <b id="aBad">${A.bad}</b></div>
-    ${cubeHTML(A.faces.map(arrowFace))}
+  const L=LEVELS[A.lv], left=A.faces.flat().filter(x=>x!==null).length;
+  $("view").innerHTML=`<button class="btn" onclick="arrowMenu()">← Levels</button>
+    <div class="meta" style="margin-top:10px;font-size:14px">Level ${A.lv+1} · ${L.name} · <span id="aHearts">${heartsStr()}</span> · Tiles: <b id="aLeft">${left}</b>${L.limit?` · ⏱ <b id="aTime">${A.left}</b>s`:""}</div>
+    ${cubeHTML(A.faces.map(arrowFace),A.size)}
     <div class="levels" style="grid-template-columns:repeat(6,1fr)">${A.faces.map((f,i)=>`<button class="lv ${i===A.sel?"cur":""}" onclick="A.sel=${i};markSel();turn(${i})" aria-label="Face ${i+1}">${i+1}</button>`).join("")}</div>
     <div class="msg" id="aMsg"></div>`;
   turn(A.sel);
 }
 function markSel(){ document.querySelectorAll(".levels .lv").forEach((b,i)=>b.classList.toggle("cur",i===A.sel)); }
-async function tapArrow(fi,i){
-  if(A.done) return;
+function tapArrow(fi,i){
+  if(A.over) return;
   const f=A.faces[fi]; if(f[i]===null) return;
   const el=$(`a${fi}_${i}`);
-  if(!free(f,i)){ A.bad++; $("aBad").textContent=A.bad; el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); return; }
+  if(!free(f,i,A.n)){
+    A.hearts--; $("aHearts").textContent=heartsStr();
+    el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake");
+    if(A.hearts<=0) endArrow(false,"💔 Game Over! Saare ❤️ khatam.");
+    return;
+  }
   const d=DIRS[f[i]]; f[i]=null;
   el.style.transform=`translate(${d[1]*170}px,${d[0]*170}px) translateZ(60px)`; el.style.opacity=0; el.disabled=true;
   const left=A.faces.flat().filter(x=>x!==null).length; $("aLeft").textContent=left;
   if(f.every(x=>x===null)){ const b=document.querySelectorAll(".levels .lv")[fi]; b.classList.add("done"); b.textContent="✅"; }
-  if(left===0){
-    A.done=true; const sec=Math.round((Date.now()-A.t0)/1000);
-    try {
-      const r=await api("/memory/complete",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:user,moves:A.bad,seconds:sec})});
-      $("aMsg").innerHTML=`<span class="ok">🎉 Cube clear! ${sec}s, ${A.bad} galat taps → +${r.xp} XP, +${r.coins} coins</span> <button class="btn" onclick="arrowCube()">Play Again</button>`;
-      loadStats();
-    } catch(e){ $("aMsg").innerHTML='<span class="bad">Score save nahi hua</span> <button class="btn" onclick="arrowCube()">Play Again</button>'; }
-  }
+  if(left===0) endArrow(true);
+}
+async function endArrow(win,msg){
+  if(A.over) return;
+  A.over=true; clearInterval(window._memTimer);
+  if(!win){ $("aMsg").innerHTML=`<span class="bad">${msg}</span><br><br><button class="btn" onclick="arrowMenu()">← Levels</button>`; return; }
+  const cl=getCleared(); if(!cl.includes(A.lv)){ cl.push(A.lv); setCleared(cl); }
+  const sec=Math.round((Date.now()-A.t0)/1000), lost=3-A.hearts;
+  const next=A.lv+1<LEVELS.length?`<button class="btn" onclick="arrowCube(${A.lv+1})">Next level →</button> `:"";
+  let txt;
+  try {
+    const r=await api("/memory/complete",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:user,moves:lost,seconds:Math.min(sec,60)})});
+    txt=`<span class="ok">🎉 Level clear! ${sec}s, ${A.hearts} ❤️ bache → +${r.xp} XP, +${r.coins} coins</span>`; loadStats();
+  } catch(e){ txt='<span class="bad">Level clear, par score save nahi hua</span>'; }
+  $("aMsg").innerHTML=txt+`<br><br>${next}<button class="btn" onclick="arrowMenu()">← Levels</button>`;
 }
 
 /* Brain Box: cube ke 6 faces par 6 Brain puzzles */
-async function brainBox(){
+let BOXALL=[], BOXPAGE=0, BOXH=3;
+const boxHearts=()=>"❤️".repeat(BOXH)+"🖤".repeat(3-BOXH);
+function boxOver(){ $("view").innerHTML=`<div class="card"><h3>💔 Game Over</h3><p>Saare ❤️ khatam ho gaye.</p><button class="btn" onclick="home()">← Games</button></div>`; }
+async function brainBox(page){
   $("view").innerHTML="Loading...";
   try {
     await loadStats(); G="BOX";
-    const all=await api("/puzzles?type=BRAIN");
-    const open=all.filter(p=>!state.solved.includes(p.id)), done=all.filter(p=>state.solved.includes(p.id));
-    LIST=[...open,...done].slice(0,6); prevSel=0; drawBox(0);
+    BOXALL=await api("/puzzles?type=BRAIN");
+    if(page===undefined){ const k=BOXALL.findIndex(p=>!state.solved.includes(p.id)); page=k<0?0:Math.floor(k/6); }
+    BOXPAGE=page; LIST=BOXALL.slice(page*6,page*6+6); prevSel=0;
+    drawBox(Math.max(0,LIST.findIndex(p=>!state.solved.includes(p.id))));
   } catch(e){ $("view").innerHTML="<div class='card bad'>Server connect nahi ho paya. Spring Boot chal raha hai?</div><button class='btn' onclick='home()'>← Games</button>"; }
 }
 function drawBox(sel){
-  const p=LIST[sel];
-  $("view").innerHTML=`<button class="btn" onclick="home()">← Games</button>
-    ${cubeHTML(LIST.map((x,i)=>`<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ffe27a;text-align:center;padding:10px"><div style="font-size:46px">${isDone(i)?"✅":"🧠"}</div><b>Box ${i+1}</b><small style="color:#fff3c4">${esc(x.title)}</small></div>`))}
-    <div class="levels" style="grid-template-columns:repeat(6,1fr)">${LIST.map((x,i)=>`<button class="lv ${isDone(i)?"done":""} ${i===sel?"cur":""}" onclick="drawBox(${i})" aria-label="Box ${i+1}">${isDone(i)?"✅":i+1}</button>`).join("")}</div>
+  const p=LIST[sel], pages=Math.ceil(BOXALL.length/6), total=state.solved.length;
+  $("view").innerHTML=`<button class="btn" onclick="home()">← Games</button> <span class="meta"><span id="boxHearts">${boxHearts()}</span> · ${BOXALL.filter(x=>state.solved.includes(x.id)).length}/${BOXALL.length} levels clear</span>
+    <div class="levels" style="grid-template-columns:repeat(${pages},1fr)">${Array.from({length:pages},(_,k)=>{
+      const all=BOXALL.slice(k*6,k*6+6).every(x=>state.solved.includes(x.id));
+      return `<button class="lv ${all?"done":""} ${k===BOXPAGE?"cur":""}" onclick="brainBox(${k})">${all?"✅":"Cube "+(k+1)}</button>`;
+    }).join("")}</div>
+    ${cubeHTML(LIST.map((x,i)=>`<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ffe27a;text-align:center;padding:10px"><div style="font-size:46px">${isDone(i)?"✅":"🧠"}</div><b>Level ${BOXPAGE*6+i+1}</b><small style="color:#fff3c4">${esc(x.title)}</small></div>`))}
+    <div class="levels" style="grid-template-columns:repeat(6,1fr)">${LIST.map((x,i)=>`<button class="lv ${isDone(i)?"done":""} ${i===sel?"cur":""}" onclick="drawBox(${i})" aria-label="Level ${BOXPAGE*6+i+1}">${isDone(i)?"✅":BOXPAGE*6+i+1}</button>`).join("")}</div>
     <div class="card">
-      <h3>${esc(p.title)} ${isDone(sel)?"✅":""}</h3>
+      <h3>Level ${BOXPAGE*6+sel+1}: ${esc(p.title)} ${isDone(sel)?"✅":""}</h3>
       <p>${esc(p.question)}</p>
       <div class="meta">Hint: ${esc(p.hint)} · +${p.xp} XP · +${p.coins} coins</div>
       <div class="row"><input id="ans" placeholder="Your answer" autocomplete="off" onkeydown="if(event.key==='Enter')solve(${p.id},${sel})">
       <button class="btn" onclick="solve(${p.id},${sel})">Submit</button></div>
       <div class="msg" id="msg"></div></div>`;
   turn(sel);
+}
+
+/* ---------- Block Puzzle (wood) ---------- */
+const SHAPES=[
+  [[0,0]],
+  [[0,0],[0,1]],[[0,0],[1,0]],
+  [[0,0],[0,1],[0,2]],[[0,0],[1,0],[2,0]],
+  [[0,0],[0,1],[0,2],[0,3]],[[0,0],[1,0],[2,0],[3,0]],
+  [[0,0],[0,1],[0,2],[0,3],[0,4]],[[0,0],[1,0],[2,0],[3,0],[4,0]],
+  [[0,0],[0,1],[1,0],[1,1]],
+  [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]],
+  [[0,0],[1,0],[1,1]],[[0,0],[0,1],[1,0]],[[0,1],[1,0],[1,1]],[[0,0],[0,1],[1,1]],
+  [[0,0],[1,0],[2,0],[2,1],[2,2]],[[0,0],[0,1],[0,2],[1,0],[2,0]],[[0,0],[0,1],[0,2],[1,2],[2,2]],[[0,2],[1,2],[2,0],[2,1],[2,2]],
+  [[0,0],[0,1],[0,2],[1,1]]
+];
+let BP;
+const bpKey=()=>"bp_best_"+user;
+function bpBest(){ try{ return +localStorage.getItem(bpKey())||0; }catch(e){ return 0; } }
+const randTray=()=>Array.from({length:3},()=>SHAPES[Math.floor(Math.random()*SHAPES.length)]);
+const dims=sh=>[Math.max(...sh.map(s=>s[0]))+1, Math.max(...sh.map(s=>s[1]))+1];
+function canPlace(sh,r,c){ return sh.every(([dr,dc])=>{ const rr=r+dr, cc=c+dc; return rr>=0&&rr<10&&cc>=0&&cc<10&&!BP.g[rr*10+cc]; }); }
+function canFitAnywhere(sh){ for(let r=0;r<10;r++) for(let c=0;c<10;c++) if(canPlace(sh,r,c)) return true; return false; }
+function blockGame(){
+  clearInterval(window._memTimer);
+  BP={g:Array(100).fill(0), tray:randTray(), score:0, best:bpBest(), over:false, drag:null};
+  $("view").innerHTML=`<button class="btn" onclick="home()">← Games</button> <button class="btn" onclick="blockGame()">New game</button>
+    <div class="bpBar"><div>Score <b id="bpScore">0</b></div><div>🏆 Best <b id="bpBest">${BP.best}</b></div></div>
+    <div class="bpGrid" id="bpGrid">${Array.from({length:100},()=>'<div class="bc"></div>').join("")}</div>
+    <div class="tray" id="bpTray"></div>
+    <div class="meta" style="text-align:center;margin-top:8px">Blocks ko board par drag karo. Poori row ya column bharne par wo saaf ho jati hai.</div>
+    <div class="msg" id="bpMsg" style="text-align:center"></div>`;
+  bpPaint();
+}
+function bpPaint(){
+  [...$("bpGrid").children].forEach((el,i)=>{ el.className="bc"+(BP.g[i]?" on":""); });
+  $("bpScore").textContent=BP.score; $("bpBest").textContent=BP.best;
+  $("bpTray").innerHTML=BP.tray.map((sh,k)=>{
+    if(!sh) return '<div class="slot"></div>';
+    const [h,w]=dims(sh), set=new Set(sh.map(s=>s[0]*w+s[1]));
+    return `<div class="slot"><div class="pc" style="grid-template-columns:repeat(${w},20px)" onpointerdown="bpDown(event,${k})">${Array.from({length:h*w},(_,j)=>`<i class="${set.has(j)?"":"e"}"></i>`).join("")}</div></div>`;
+  }).join("");
+}
+function bpDown(e,k){
+  if(BP.over||BP.drag||!BP.tray[k]) return;
+  e.preventDefault();
+  const sh=BP.tray[k], [h,w]=dims(sh), cells=$("bpGrid").children;
+  const a=cells[0].getBoundingClientRect(), b=cells[1].getBoundingClientRect(), p=b.left-a.left, cs=a.width;
+  const fl=document.createElement("div"); fl.className="pc";
+  fl.style.cssText=`position:fixed;z-index:99;pointer-events:none;gap:${p-cs}px;grid-template-columns:repeat(${w},${cs}px)`;
+  const set=new Set(sh.map(s=>s[0]*w+s[1]));
+  fl.innerHTML=Array.from({length:h*w},(_,j)=>`<i class="${set.has(j)?"":"e"}" style="width:${cs}px;height:${cs}px"></i>`).join("");
+  document.body.appendChild(fl);
+  BP.drag={k,sh,w,h,fl,x0:a.left,y0:a.top,p,r:-1,c:-1,ok:false};
+  bpMove(e);
+  window.addEventListener("pointermove",bpMove);
+  window.addEventListener("pointerup",bpUp);
+  window.addEventListener("pointercancel",bpUp);
+}
+function bpClearHL(){ [...$("bpGrid").children].forEach(el=>el.classList.remove("ok","bad")); }
+function bpMove(e){
+  const d=BP.drag; if(!d) return;
+  const left=e.clientX-(d.w*d.p)/2, top=e.clientY-(d.h*d.p)/2-50;   // finger ke thoda upar
+  d.fl.style.left=left+"px"; d.fl.style.top=top+"px";
+  d.c=Math.round((left-d.x0)/d.p); d.r=Math.round((top-d.y0)/d.p);
+  d.ok=canPlace(d.sh,d.r,d.c);
+  bpClearHL();
+  const cells=$("bpGrid").children;
+  d.sh.forEach(([dr,dc])=>{ const rr=d.r+dr, cc=d.c+dc; if(rr>=0&&rr<10&&cc>=0&&cc<10) cells[rr*10+cc].classList.add(d.ok?"ok":"bad"); });
+}
+function bpUp(){
+  window.removeEventListener("pointermove",bpMove);
+  window.removeEventListener("pointerup",bpUp);
+  window.removeEventListener("pointercancel",bpUp);
+  const d=BP.drag; if(!d) return; BP.drag=null;
+  d.fl.remove(); bpClearHL();
+  if(d.ok) bpPlace(d.k,d.sh,d.r,d.c);
+}
+function bpPlace(k,sh,r,c){
+  sh.forEach(([dr,dc])=>{ BP.g[(r+dr)*10+c+dc]=1; });
+  BP.score+=sh.length; BP.tray[k]=null;
+  const rows=[], cols=[], idx=[...Array(10).keys()];
+  for(let i=0;i<10;i++){
+    if(idx.every(j=>BP.g[i*10+j])) rows.push(i);
+    if(idx.every(j=>BP.g[j*10+i])) cols.push(i);
+  }
+  const n=rows.length+cols.length;
+  rows.forEach(i=>{ for(let j=0;j<10;j++) BP.g[i*10+j]=0; });
+  cols.forEach(i=>{ for(let j=0;j<10;j++) BP.g[j*10+i]=0; });
+  if(n) BP.score+=n*10*n;                                   // 1 line=10, 2=40, 3=90...
+  if(BP.tray.every(x=>x===null)) BP.tray=randTray();
+  if(BP.score>BP.best){ BP.best=BP.score; try{ localStorage.setItem(bpKey(),BP.best); }catch(e){} }
+  bpPaint();
+  if(BP.tray.filter(Boolean).every(sp=>!canFitAnywhere(sp))){
+    BP.over=true;
+    $("bpMsg").innerHTML=`<span class="bad">💔 Game Over! Score ${BP.score}</span> <button class="btn" onclick="blockGame()">New game</button>`;
+  }
 }
 
 /* ---------- start ---------- */
