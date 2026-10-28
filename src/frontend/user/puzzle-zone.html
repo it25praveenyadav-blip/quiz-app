@@ -6,8 +6,7 @@
 <title>Puzzle Zone</title>
 <style>
   *{box-sizing:border-box}
-  body{margin:0;min-height:100vh;display:flex;justify-content:center;padding:24px 12px;font-family:'Trebuchet MS','Segoe UI',sans-serif;color:#3b2412;background-color:#1c1840;
-    background-image:linear-gradient(180deg,rgba(0,0,0,.35) 0 6px,transparent 6px),linear-gradient(90deg,rgba(0,0,0,.35) 0 6px,transparent 6px),radial-gradient(circle at 15% 25%,rgba(190,60,200,.28),transparent 40%),radial-gradient(circle at 85% 75%,rgba(40,200,210,.22),transparent 40%);background-size:120px 60px,120px 60px,auto,auto}
+  body{margin:0;min-height:100vh;display:flex;justify-content:center;padding:24px 12px;font-family:'Trebuchet MS','Segoe UI',sans-serif;color:#3b2412;background:#fdf8e8 url("img/bg-questions.png") center/cover no-repeat fixed}
   .frame{width:100%;max-width:720px;height:fit-content;padding:12px;border-radius:30px;background:linear-gradient(#a8693a,#6b4423);border:3px solid #c98f3c;box-shadow:0 14px 30px rgba(0,0,0,.5)}
   .panel{background:linear-gradient(160deg,#ebdfc0,#ddd0ab);border-radius:20px;padding:20px;min-height:420px}
   header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
@@ -72,6 +71,13 @@
   .pc{display:grid;gap:2px;touch-action:none;cursor:grab;user-select:none}
   .pc i{display:block;width:20px;height:20px;border-radius:3px;background:linear-gradient(#f5b87a,#e0a060);box-shadow:inset 0 -2px 0 #b07038}
   .pc i.e{background:transparent;box-shadow:none}
+  /* ---- Arrow Maze ---- */
+  .mazeBoard{display:block;width:100%;max-width:460px;margin:10px auto;background:#f3e6c4;border:3px solid #c98f3c;border-radius:12px;touch-action:manipulation}
+  .mz{cursor:pointer}
+  .mz .line{fill:none;stroke:#3b2412;stroke-linecap:round;stroke-linejoin:round}
+  .mz .hit{fill:none;stroke:transparent;stroke-linecap:round;stroke-linejoin:round}
+  .mz polygon{fill:#3b2412}
+  .mz.mzbad .line{stroke:#c0392b} .mz.mzbad polygon{fill:#c0392b} .mz.mzbad{animation:shake .3s}
   @media (max-width:420px){.game .ic{font-size:30px}.game b{font-size:13px}}
 </style>
 </head>
@@ -111,7 +117,7 @@ async function loadStats(){
 }
 
 /* ---------- Home: 3 games in a row ---------- */
-const GAMES=[["ARROW","🧊","Arrow Cube","Clear the 3D cube"],["MEMORY","🃏","3D Cards","Flip & match"],["BOX","🧠","Brain Box","Spin the cube"],["BLOCK","🧱","Block Puzzle","Fit the wood blocks"]];
+const GAMES=[["ARROW","🧊","Arrow Cube","Clear the 3D cube"],["MAZE","🧭","Arrow Maze","Guide arrows out"],["MEMORY","🃏","3D Cards","Flip & match"],["BOX","🧠","Brain Box","Spin the cube"],["BLOCK","🧱","Block Puzzle","Fit the wood blocks"]];
 let ci=0;
 function place(){
   const n=GAMES.length, dx=Math.min(150,($("view").clientWidth||320)*0.42);
@@ -137,6 +143,7 @@ async function openGame(t){
   if (t === "ARROW") return arrowMenu();
   if (t === "BOX") { BOXH = 3; return brainBox(); }
   if (t === "BLOCK") return blockGame();
+  if (t === "MAZE") return mazeMenu();
   $("view").innerHTML = "Loading...";
   try { await loadStats(); LIST = await api(`/puzzles?type=${t}`); G = t; draw(null); }
   catch(e){ $("view").innerHTML = "<div class='card bad'>Server connect nahi ho paya. Spring Boot chal raha hai?</div><button class='btn' onclick='home()'>← Games</button>"; }
@@ -202,7 +209,7 @@ function showMemory(lv){
   $("view").innerHTML=`<button class="btn" onclick="memMenu()">← Levels</button>
     <div class="card" style="margin-top:12px"><h3>🃏 Level ${lv+1} · ${L.name}</h3>
     <div class="meta"><span id="mHearts">${mHearts()}</span> · Moves: <b id="mMoves">0</b> · Time: <b id="mTime">${L.limit}</b>s left · ${L.pairs} pairs</div>
-    <div class="grid" style="grid-template-columns:repeat(${L.cols},1fr);max-width:${L.cols*78}px">${deck.map((c,i)=>`<div class="flip" id="t${i}" onclick="flip(${i})"><div class="in"><div class="f">?</div><div class="b"><img src="img/cards/${c+1}.png" alt="Card ${c+1}" onerror="this.outerHTML='${MICONS[c]}'"></div></div></div>`).join("")}</div>
+    <div class="grid" style="grid-template-columns:repeat(${L.cols},1fr);max-width:${L.cols*78}px">${deck.map((c,i)=>`<div class="flip" id="t${i}" onclick="flip(${i})"><div class="in"><div class="f">?</div><div class="b"><img src="img/cards/${c+1}.svg" alt="Card ${c+1}" onerror="this.outerHTML='${MICONS[c]}'"></div></div></div>`).join("")}</div>
     <div class="msg" id="mMsg"></div></div>`;
 }
 function flip(i){
@@ -495,6 +502,118 @@ function bpPlace(k,sh,r,c){
     BP.over=true;
     $("bpMsg").innerHTML=`<span class="bad">💔 Game Over! Score ${BP.score}</span> <button class="btn" onclick="blockGame()">New game</button>`;
   }
+}
+
+/* ---------- Arrow Maze (2D, 30 levels) ---------- */
+const MD=[[-1,0],[1,0],[0,-1],[0,1]];
+const MZ=Array.from({length:30},(_,i)=>({
+  name:i<5?"Easy":i<10?"Medium":i<18?"Hard":i<26?"Very Hard":"Extreme",
+  n:Math.min(12,5+Math.floor(i/4)), dens:Math.min(.8,.5+i*.01), maxL:Math.min(8,3+Math.floor(i/4)), timed:i>=14
+}));
+let MZG;
+const mzKey=()=>"maze_cleared_"+user;
+function mzCleared(){ try{ return JSON.parse(localStorage.getItem(mzKey())||"[]"); }catch(e){ return []; } }
+const rnd=k=>Math.floor(Math.random()*k);
+// Arrows ek-ek karke aise rakhe jaate hain ki har arrow ka seedha raasta pehle se rakhe arrows se khali ho => board hamesha solvable
+function genMaze(n,dens,maxL){
+  const occ=new Int16Array(n*n).fill(-1), arrows=[];
+  let tries=n*n*60, cover=0;
+  while(tries-->0 && cover<n*n*dens){
+    const hr=rnd(n), hc=rnd(n), d=rnd(4);
+    if(occ[hr*n+hc]!==-1) continue;
+    const ray=new Set(); let r=hr+MD[d][0], c=hc+MD[d][1], ok=true;
+    while(r>=0&&r<n&&c>=0&&c<n){ if(occ[r*n+c]!==-1){ ok=false; break; } ray.add(r*n+c); r+=MD[d][0]; c+=MD[d][1]; }
+    if(!ok) continue;
+    const len=2+rnd(maxL-1), cells=[[hr,hc]], used=new Set([hr*n+hc]);
+    let cr=hr, cc=hc, dir=d^1;                              // pehla kadam head ke peeche
+    for(let k=1;k<len;k++){
+      const opts=(k===1?[d^1]:[0,1,2,3]).filter(x=>{ const rr=cr+MD[x][0], c2=cc+MD[x][1]; return rr>=0&&rr<n&&c2>=0&&c2<n&&occ[rr*n+c2]===-1&&!used.has(rr*n+c2)&&!ray.has(rr*n+c2); });
+      if(!opts.length) break;
+      dir=opts[rnd(opts.length)]; cr+=MD[dir][0]; cc+=MD[dir][1];
+      cells.push([cr,cc]); used.add(cr*n+cc);
+    }
+    if(cells.length<2) continue;
+    const id=arrows.length; arrows.push({cells,d});
+    cells.forEach(([a,b])=>{ occ[a*n+b]=id; }); cover+=cells.length;
+  }
+  return {arrows,occ};
+}
+function mazeMenu(){
+  clearInterval(window._memTimer);
+  const cl=mzCleared();
+  $("view").innerHTML=`<button class="btn" onclick="home()">← Games</button> <span class="meta">${cl.length}/30 levels clear</span>
+    <div class="meta" style="margin-top:10px;font-size:13px">Arrow jis taraf point kare, us raaste mein koi aur arrow na ho to wo bahar nikal jata hai. Galat tap par ❤️ jata hai (3 ❤️). Clear hua level dobara nahi khelta.<br>L1-5 Easy · L6-10 Medium · L11-18 Hard (L15+ timer) · L19-26 Very Hard · L27-30 Extreme</div>
+    <div class="levels" style="grid-template-columns:repeat(auto-fill,minmax(58px,1fr))">${MZ.map((L,i)=>{
+      const done=cl.includes(i), lock=i>0&&!cl.includes(i-1);
+      return `<button class="lv ${done?"done":""}" ${done||lock?"disabled":""} title="${L.name} · ${L.n}x${L.n}" onclick="mazeLevel(${i})" aria-label="Level ${i+1} ${L.name}">${done?"✅":lock?"🔒":i+1}</button>`;
+    }).join("")}</div>`;
+}
+const mzHeartsStr=()=>"❤️".repeat(MZG.hearts)+"🖤".repeat(3-MZG.hearts);
+function mazeLevel(lv){
+  const L=MZ[lv], g=genMaze(L.n,L.dens,L.maxL);
+  clearInterval(window._memTimer);
+  MZG={lv,n:L.n,arrows:g.arrows,occ:g.occ,hearts:3,left:g.arrows.length,over:false,t0:Date.now(),removed:g.arrows.map(()=>false),
+       limit:L.timed?Math.round(g.arrows.length*(3.2-lv*0.04)):0};
+  MZG.tleft=MZG.limit;
+  drawMaze();
+  if(MZG.limit){
+    window._memTimer=setInterval(()=>{
+      if(MZG.over) return;
+      MZG.tleft--; const t=$("mzTime"); if(t) t.textContent=MZG.tleft;
+      if(MZG.tleft<=0) endMaze(false,"⏰ Time khatam!");
+    },1000);
+  }
+}
+function drawMaze(){
+  const G=MZG, n=G.n, cs=40, W=n*cs;
+  const dots=[]; for(let r=0;r<n;r++) for(let c=0;c<n;c++) dots.push(`<circle cx="${c*cs+cs/2}" cy="${r*cs+cs/2}" r="2" fill="#d8c79a"/>`);
+  const shapes=G.arrows.map((a,i)=>{
+    const pts=[...a.cells].reverse().map(([r,c])=>`${c*cs+cs/2},${r*cs+cs/2}`).join(" ");
+    const [hr,hc]=a.cells[0], x=hc*cs+cs/2, y=hr*cs+cs/2, dx=MD[a.d][1], dy=MD[a.d][0], px=-dy, py=dx;
+    const tip=`${x+dx*cs*.45},${y+dy*cs*.45}`, b1=`${x-dx*cs*.05+px*cs*.26},${y-dy*cs*.05+py*cs*.26}`, b2=`${x-dx*cs*.05-px*cs*.26},${y-dy*cs*.05-py*cs*.26}`;
+    return `<g class="mz" id="m${i}" onclick="tapMaze(${i})"><polyline class="hit" points="${pts}" stroke-width="${cs*.6}"/><polyline class="line" points="${pts}" stroke-width="${Math.max(4,cs*.16)}"/><polygon points="${tip} ${b1} ${b2}"/></g>`;
+  }).join("");
+  $("view").innerHTML=`<button class="btn" onclick="mazeMenu()">← Levels</button>
+    <div class="meta" style="margin-top:10px;font-size:14px">Level ${G.lv+1} · ${MZ[G.lv].name} · <span id="mzHearts">${mzHeartsStr()}</span> · Arrows: <b id="mzLeft">${G.left}</b>${G.limit?` · ⏱ <b id="mzTime">${G.tleft}</b>s`:""}</div>
+    <svg class="mazeBoard" viewBox="0 0 ${W} ${W}" role="img" aria-label="Arrow maze board">${dots.join("")}${shapes}</svg>
+    <div class="msg" id="mzMsg" style="text-align:center"></div>`;
+}
+function mzBlocker(a){
+  const G=MZG, [dr,dc]=MD[a.d]; let r=a.cells[0][0]+dr, c=a.cells[0][1]+dc;
+  while(r>=0&&r<G.n&&c>=0&&c<G.n){ const o=G.occ[r*G.n+c]; if(o!==-1) return o; r+=dr; c+=dc; }
+  return -1;
+}
+function mzFlash(el){ if(!el) return; el.classList.remove("mzbad"); void el.getBBox; el.classList.add("mzbad"); setTimeout(()=>el.classList.remove("mzbad"),450); }
+function tapMaze(i){
+  const G=MZG; if(G.over||G.removed[i]) return;
+  const a=G.arrows[i], b=mzBlocker(a), el=document.getElementById("m"+i);
+  if(b===-1){
+    G.removed[i]=true; a.cells.forEach(([r,c])=>{ G.occ[r*G.n+c]=-1; }); G.left--;
+    const [dr,dc]=MD[a.d];
+    el.style.pointerEvents="none"; el.style.transition="transform .55s ease-in,opacity .55s";
+    el.style.transform=`translate(${dc*G.n*40}px,${dr*G.n*40}px)`; el.style.opacity="0";
+    setTimeout(()=>el.remove(),600);
+    $("mzLeft").textContent=G.left;
+    if(G.left===0) endMaze(true);
+  } else {
+    G.hearts--; $("mzHearts").textContent=mzHeartsStr();
+    mzFlash(el); mzFlash(document.getElementById("m"+b));     // laal = ye arrow aur jo isko rok raha hai
+    if(G.hearts<=0) endMaze(false,"💔 Game Over! Saare ❤️ khatam.");
+  }
+}
+async function endMaze(win,msg){
+  const G=MZG; if(G.over) return;
+  G.over=true; clearInterval(window._memTimer);
+  if(!win){ $("mzMsg").innerHTML=`<span class="bad">${msg}</span><br><br><button class="btn" onclick="mazeMenu()">← Levels</button>`; return; }
+  const cl=mzCleared(); if(!cl.includes(G.lv)){ cl.push(G.lv); try{ localStorage.setItem(mzKey(),JSON.stringify(cl)); }catch(e){} }
+  const sec=Math.round((Date.now()-G.t0)/1000), lost=3-G.hearts;
+  const next=G.lv+1<MZ.length?`<button class="btn" onclick="mazeLevel(${G.lv+1})">Next level →</button> `:"";
+  let txt;
+  try {
+    const r=await api("/memory/complete",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:user,moves:lost,seconds:Math.min(sec,60)})});
+    txt=`<span class="ok">🎉 Level clear! ${sec}s, ${G.hearts} ❤️ bache → +${r.xp} XP, +${r.coins} coins</span>`; loadStats();
+  } catch(e){ txt='<span class="bad">Level clear, par score save nahi hua</span>'; }
+  $("mzMsg").innerHTML=txt+`<br><br>${next}<button class="btn" onclick="mazeMenu()">← Levels</button>`;
 }
 
 /* ---------- start ---------- */
