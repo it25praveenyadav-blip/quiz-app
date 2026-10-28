@@ -1,5 +1,5 @@
 /* Poori app ka background: ye file har page ke <head> mein link hoti hai */
 html, body { min-height: 100%; }
 body {
-  background: #fdf8e8 url("/user/img/bg-questions.png") center / cover no-repeat fixed !important;
+  background: #ffffff url("/user/img/bg-questions.png") center / cover no-repeat fixed !important;
 }
